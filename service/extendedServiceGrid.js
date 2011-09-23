@@ -1,9 +1,9 @@
-Ext.ns('App.ServAdm');
+Ext.ns('App.service');
 
-App.ServAdm.extendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
+App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 	initComponent : function(){
 ///////////////////// Extended Service GRID configuration////////////////				
-		this.extendedGridStore = new Ext.data.Store ({
+		this.ExtendedGridStore = new Ext.data.Store ({
 			reader: new Ext.data.JsonReader ({
 				totalProperty: 'meta.total_count'
 				,successProperty: 'success'
@@ -23,10 +23,8 @@ App.ServAdm.extendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 			,autoload: true
 		});	
 		config = {
-			//width: 170
-			//,height: 230
 			loadMask : {	msg : 'Подождите, идет загрузка...' }			
-			,store: this.extendedGridStore
+			,store: this.ExtendedGridStore
 			,sm : new Ext.grid.RowSelectionModel({
 				singleSelect : true
 			})
@@ -52,14 +50,20 @@ App.ServAdm.extendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 		    		flag = val ? 'yes' : 'no';
 		    		return "<img src='/media/app/servAdmApp/resources/images/icon-"+flag+".gif'>"
 		    	}
-		    }]			
+		    }]
+		    
+		    ,listeners: {
+	        	cellclick: function(grid, rowIndex, columnIndex, e) {
+	        		this.fireEvent ('gridcellclick',grid, rowIndex, columnIndex, e);
+	        	}
+	        }
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-		App.ServAdm.extendedServiceGrid.superclass.initComponent.apply(this, arguments);
+		App.service.ExtendedServiceGrid.superclass.initComponent.apply(this, arguments);
 	}
 
-}); //end of extendedServiceGrid
+}); //end of ExtendedServiceGrid
 
-Ext.reg('extendedservicegrid', App.ServAdm.extendedServiceGrid);
+Ext.reg('extendedservicegrid', App.service.ExtendedServiceGrid);
 
 		

@@ -1,9 +1,9 @@
-Ext.ns('App.ServAdm');
+Ext.ns('App.service');
 
-App.ServAdm.baseServiceForm = Ext.extend(Ext.form.FormPanel, {
+App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 	initComponent : function(){
 				
-		this.comboGroupStore = new Ext.data.Store({
+		this.ComboGroupStore = new Ext.data.Store({
         	proxy: new Ext.data.ScriptTagProxy({
             	url: get_api_url('baseservice')
         	})
@@ -18,9 +18,9 @@ App.ServAdm.baseServiceForm = Ext.extend(Ext.form.FormPanel, {
 			])
 		});
 			
-		this.groupCombo = new Ext.form.ComboBox({
+		this.GroupCombo = new Ext.form.ComboBox({
 
-			store: this.comboGroupStore
+			store: this.ComboGroupStore
 			,displayField: 'name'
 			,fieldLabel: 'Группа'
 			,allowBlank: true			
@@ -56,7 +56,7 @@ App.ServAdm.baseServiceForm = Ext.extend(Ext.form.FormPanel, {
 					fieldLabel: 'Наименование'
 					,allowBlank: false
 				},
-					this.groupCombo
+					this.GroupCombo
 				,{
 					fieldLabel: 'Код'
 				}]	
@@ -102,10 +102,10 @@ App.ServAdm.baseServiceForm = Ext.extend(Ext.form.FormPanel, {
 			}]
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-		App.ServAdm.baseServiceForm.superclass.initComponent.apply(this, arguments);
+		App.service.BaseServiceForm.superclass.initComponent.apply(this, arguments);
 	}
 
 }); //end of baseServiceForm
 
-Ext.reg('baseserviceform', App.ServAdm.baseServiceForm);
+Ext.reg('baseserviceform', App.service.BaseServiceForm);
 		

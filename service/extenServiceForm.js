@@ -1,9 +1,9 @@
-Ext.ns('App.ServAdm');
+Ext.ns('App.service');
 
-App.ServAdm.extenServiceForm = Ext.extend(Ext.form.FormPanel, {
+App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 	initComponent : function(){
 		
-		this.combOrganizationStore = new Ext.data.Store({
+		this.CombOrganizationStore = new Ext.data.Store({
         	proxy: new Ext.data.ScriptTagProxy({
             	url: get_api_url('state')
         	})
@@ -17,9 +17,9 @@ App.ServAdm.extenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			])
 		});
 			
-		this.organizationCombo = new Ext.form.ComboBox({
+		this.OrganizationCombo = new Ext.form.ComboBox({
 
-			store: this.combOrganizationStore
+			store: this.CombOrganizationStore
 			,displayField: 'name'
 			,fieldLabel: 'Организация'		
 			,valueField: 'id'
@@ -29,7 +29,7 @@ App.ServAdm.extenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			,typeAhead: true			
 		});
 		
-		this.comboTubeStore = new Ext.data.Store({
+		this.ComboTubeStore = new Ext.data.Store({
         	proxy: new Ext.data.ScriptTagProxy({
             	url: get_api_url('tube')
         	})
@@ -43,9 +43,9 @@ App.ServAdm.extenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			])
 		});
 			
-		this.tubeCombo = new Ext.form.ComboBox({
+		this.TubeCombo = new Ext.form.ComboBox({
 
-			store: this.comboTubeStore
+			store: this.ComboTubeStore
 			,displayField: 'name'
 			,fieldLabel: 'Тара'
 			,allowBlank: true			
@@ -62,8 +62,8 @@ App.ServAdm.extenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			,defaults: {
 					width: 130
 			}
-			,items: [this.organizationCombo
-				,this.tubeCombo
+			,items: [this.OrganizationCombo
+				,this.TubeCombo
 			,{
 				xtype: 'textfield'
 				,fieldLabel: 'Количество тары'
@@ -83,10 +83,10 @@ App.ServAdm.extenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			}]
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-		App.ServAdm.extenServiceForm.superclass.initComponent.apply(this, arguments);
+		App.service.ExtenServiceForm.superclass.initComponent.apply(this, arguments);
 	}
 
-}); //end of extenServiceForm
+}); //end of ExtenServiceForm
 
-Ext.reg('extenserviceform', App.ServAdm.extenServiceForm);
+Ext.reg('extenserviceform', App.service.ExtenServiceForm);
 		

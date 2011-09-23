@@ -1,6 +1,6 @@
-Ext.ns('App.ServAdm');
+Ext.ns('App.service');
 
-App.ServAdm.servGrid = Ext.extend(Ext.grid.GridPanel, {
+App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 	initComponent : function() {
 
 	this.proxy = new Ext.data.ScriptTagProxy({
@@ -31,8 +31,8 @@ App.ServAdm.servGrid = Ext.extend(Ext.grid.GridPanel, {
 	});
 	
 	this.store = new Ext.data.Store({				
-   		autoLoad:true
-		,restful: true
+   		//autoLoad:true
+		restful: true
 		,proxy: this.proxy
     	,reader: this.reader
     	,writer: this.writer    
@@ -43,24 +43,7 @@ App.ServAdm.servGrid = Ext.extend(Ext.grid.GridPanel, {
 			,sort : 'sort'
 			,dir : 'dir'
 		}
-	});
-	
-/*	this.store = new Ext.data.Store({
-        proxy: new Ext.data.ScriptTagProxy({
-            url: get_api_url('baseservice')
-        }),
-        autoLoad:true,
-        reader: new Ext.data.JsonReader({
-                    totalProperty: 'meta.total_count',
-                    successProperty: 'success',
-                    idProperty: 'id',
-                    root: 'objects',
-                    messageProperty: 'message'
-                }, [
-                    {name: 'id'},
-                    {name: 'name'}
-                ])
-    }); */
+	});	
 	
 	this.columns =  [
 				this.selM
@@ -115,12 +98,17 @@ App.ServAdm.servGrid = Ext.extend(Ext.grid.GridPanel, {
 	            displayMsg: 'Показана запись {0} - {1} из {2}',
 	            emptyMsg: "Нет записей"
 	        })
+	        ,listeners: {
+	        	cellclick: function(grid, rowIndex, columnIndex, e) {
+	        		this.fireEvent ('gridcellclick',grid, rowIndex, columnIndex, e);
+	        	}
+	        }
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-		App.ServAdm.servGrid.superclass.initComponent.apply(this, arguments);
+		App.service.ServGrid.superclass.initComponent.apply(this, arguments);
 	}
 
-}); //end of servGrid
+}); //end of ServGrid
 
-Ext.reg('servgrid', App.ServAdm.servGrid);
+Ext.reg('servgrid', App.service.ServGrid);
 

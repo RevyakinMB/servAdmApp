@@ -1,5 +1,5 @@
 Ext.ns('App');
-Ext.ns('App.ServAdm');
+Ext.ns('App.service');
 
 App.ServCentralPanel = Ext.extend(Ext.Panel, {
 	

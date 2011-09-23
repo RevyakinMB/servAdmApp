@@ -1,9 +1,9 @@
-Ext.ns('App.ServAdm');
+Ext.ns('App.service');
 
-App.ServAdm.extenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
+App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 	initComponent : function(){
 ///////////////////// Extended Service Prices GRID configuration////////////////		
-		this.priceGridStore = new Ext.data.Store ({
+		this.PriceGridStore = new Ext.data.Store ({
 			reader: new Ext.data.JsonReader ({
 				totalProperty: 'meta.total_count'
 				,successProperty: 'success'
@@ -27,7 +27,7 @@ App.ServAdm.extenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 			,loadMask : {
 				msg : 'Подождите, идет загрузка...'
 			}
-			,store: this.priceGridStore
+			,store: this.PriceGridStore
 			,sm : new Ext.grid.RowSelectionModel({
 				singleSelect : true
 			})
@@ -53,11 +53,11 @@ App.ServAdm.extenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 		    }]			
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-		App.ServAdm.extenServPriceGrid.superclass.initComponent.apply(this, arguments);
+		App.service.ExtenServPriceGrid.superclass.initComponent.apply(this, arguments);
 	}
 
-}); //end of extenServPriceGrid
+}); //end of ExtenServPriceGrid
 
-Ext.reg('extenservpricegrid', App.ServAdm.extenServPriceGrid);
+Ext.reg('extenservpricegrid', App.service.ExtenServPriceGrid);
 
 		
