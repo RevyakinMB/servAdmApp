@@ -1,4 +1,5 @@
 Ext.ns('App.ServicePanel');
+Ext.ns('Ext.ux');
 
 App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 
@@ -13,13 +14,6 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 	        ,containerScroll: true
 	        ,autoScroll: true
 	        
-	        ,loader:new Ext.tree.TreeLoader({
-	        	dataUrl:'http://dev.medhq.ru/media/webapp/service_tree/'
-	        	,requestMethod:'GET'
-	        	,listeners:{
-	        		load: function(){}
-	        	}
-	        })
 	        ,rootVisible: false
 	        ,root:{
 		        nodeType: 'async'
@@ -29,9 +23,10 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 	        },
 	        listeners:{
 	        	click:function(node,e){
-	        		if(node.isLeaf()) {
-	        			App.eventManager.fireEvent('servicedblclick', node.attributes);
-	        		}
+	        		//if(node.isLeaf()) {
+	        			//App.eventManager.fireEvent('servicedblclick', node.attributes);
+	        			this.fireEvent('nodeClick',node,e);
+	        		//}
 	        	}
 	        }
 	        ,keys:{

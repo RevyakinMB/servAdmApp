@@ -1,29 +1,43 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Управление услугами</title>
+<title>Модуль управления услугами</title>
 
-<link rel="stylesheet" type="text/css" href="../../../media/extjs/resources/css/ext-all.css" />
-<script type="text/javascript" src="../../../media/extjs/adapter/ext/ext-base.js"></script>
-<script type="text/javascript" src="../../../media/extjs/ext-all-debug.js"></script>
+<script type="text/javascript">
+                //var state = '{{ request.active_profile.state }}';
+                //var MEDIA_URL = '/media';
+                var API_URL = 'http://dev.medhq.ru/api/v1';
+                function get_api_url(resource){
+                        return [API_URL,'dashboard',resource].join("/");
+                }
+</script>
 
-<script type="text/javascript" src="../../../media/app/serviceadm/serviceTreePanel.js"></script>
-<script type="text/javascript" src="../../../media/app/serviceadm/servGrid.js"></script>
-<script type="text/javascript" src="../../../media/app/serviceadm/surveyPanel.js"></script>
-<script type="text/javascript" src="../../../media/app/serviceadm/app.js"></script>
+<link rel="stylesheet" type="text/css" href="/media/extjs/resources/css/ext-all.css" />
+<script type="text/javascript" src="/media/extjs/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="/media/extjs/ext-all-debug.js"></script>
 
+<script type="text/javascript" src="/media/app/servAdmApp/JSONP.js"></script>
+<script type="text/javascript" src="/media/app/servAdmApp/infoTabPanel.js"></script>
+<script type="text/javascript" src="/media/app/servAdmApp/XDomainTreeLoader.js"></script>
+<script type="text/javascript" src="/media/app/servAdmApp/serviceTreePanel.js"></script>
+<script type="text/javascript" src="/media/app/servAdmApp/servGrid.js"></script>
+<script type="text/javascript" src="/media/app/servAdmApp/extendedServiceGrid.js"></script>
+<script type="text/javascript" src="/media/app/servAdmApp/extenServPriceGrid.js"></script>
+<script type="text/javascript" src="/media/app/servAdmApp/baseServiceForm.js"></script>
+<script type="text/javascript" src="/media/app/servAdmApp/extenServiceForm.js"></script>
+
+<script type="text/javascript" src="/media/app/servAdmApp/serviceAdminPanel.js"></script>
+
+<script type="text/javascript" src="/media/app/servAdmApp/CentralPanel.js"></script>
+<script type="text/javascript" src="/media/app/servAdmApp/MainPanel.js"></script>
+
+<script type="text/javascript" src="/media/app/servAdmApp/app.js"></script>
+
+<script type="text/javascript" src="/media/app/servAdmApp/App.js"></script>
 </head>
 
 <body>
 </body>
 
 </html>
-<!--
-    <script type="text/javascript" src="{{ MEDIA_URL }}extjs/adapter/ext/ext-base.js"></script>
 
-    <script type="text/javascript" src="{{ MEDIA_URL }}extjs/ext-all-debug.js"></script>
-
-    <script type="text/javascript" src="{{ MEDIA_URL }}app/service/ServicePanel.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}app/service/MainPanel.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}app/service/app.js"></script>
--->
