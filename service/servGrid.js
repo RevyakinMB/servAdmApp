@@ -16,27 +16,28 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 		,idProperty: 'id'
 	  ,root: 'objects'
 	},[
-		{ name : 'parent'}
-		,{ name: 'name' } 
-		,{ name: 'short_name'}
-		,{ name: 'code'}						
-		,{ name : 'execution_time'}
-		,{ name : 'version'}
-		,{ name : 'material'}
-		,{ name : 'gen_ref_interval'} 
+		{ name : 'parent', allowBlank: true}
+		,{ name: 'name', allowBlank: true } 
+		,{ name: 'short_name', allowBlank: true}
+		,{ name: 'code', allowBlank: true}						
+		,{ name : 'execution_time', allowBlank: true}
+		,{ name : 'version', allowBlank: true}
+		,{ name : 'material', allowBlank: true}
+		,{ name : 'gen_ref_interval', allowBlank: true} 
 	]);
 		
 	this.writer = new Ext.data.JsonWriter({
     	encode: false 
+    	,writeAllFields: true
 	});
 	
-	this.store = new Ext.data.Store({				
-   		//autoLoad:true
-		restful: true
+	this.store = new Ext.data.Store({	
+  		autoSave: true  		
+		,restful: true
 		,proxy: this.proxy
     	,reader: this.reader
     	,writer: this.writer    
-	  //,baseParams:  {format:'json' }   //ЗДЕСЬ БЫЛА ПРОБЛЕМА С ЗАГРУЗКОЙ ДАННЫХ
+	  	//,baseParams:  {format:'json' }   //ЗДЕСЬ БЫЛА ПРОБЛЕМА С ЗАГРУЗКОЙ ДАННЫХ
 		,paramNames: {
 		  start : 'offset'
 			,limit : 'limit'
@@ -82,26 +83,36 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 		    }
 		];
 
-		var config = {
+		var config = {			
 			id: 'serviceAdm-grid'
+			
 			,loadMask : {
 				msg : 'Подождите, идет загрузка...'
 			}
 			//,border : false
 			,store: this.store
 			,columns:this.columns
-			,sm : this.selM			
+			,sm : this.selM
+	//		,rowselect: function(sm, row, rec) {
+    //                	this.fireEvent('serviceselect', rec); }
+			,tbar: [new Ext.Button({
+				text: "save it"
+				,handler: function() {
+					this.store.save();
+				}
+				,scope: this
+			})]
 			,bbar: new Ext.PagingToolbar({
 	            pageSize: 20,
 	            store: this.store,
 	            displayInfo: true,
 	            displayMsg: 'Показана запись {0} - {1} из {2}',
 	            emptyMsg: "Нет записей"
-	        })
+	        })	        
 	        ,listeners: {
 	        	cellclick: function(grid, rowIndex, columnIndex, e) {
-	        		this.fireEvent ('gridcellclick',grid, rowIndex, columnIndex, e);
-	        	}
+	        		this.fireEvent ('gridcellclick',grid, rowIndex, columnIndex, e);	        	
+	        	}	        	
 	        }
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));

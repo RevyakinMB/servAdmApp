@@ -3,9 +3,9 @@ Ext.ns('App.service');
 App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 	initComponent : function(){
 				
-		this.ComboGroupStore = new Ext.data.Store({
+		this.ComboMaterialStore = new Ext.data.Store({
         	proxy: new Ext.data.ScriptTagProxy({
-            	url: get_api_url('baseservice')
+            	url: get_api_url('material')
         	})
         	,autoLoad: true
         	,reader: new Ext.data.JsonReader({
@@ -18,16 +18,16 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 			])
 		});
 			
-		this.GroupCombo = new Ext.form.ComboBox({
+		this.MaterialCombo = new Ext.form.ComboBox({
 
-			store: this.ComboGroupStore
+			store: this.ComboMaterialStore
 			,displayField: 'name'
-			,fieldLabel: 'Группа'
+			,name: 'material'
+			,fieldLabel: 'Материал'
 			,allowBlank: true			
 			,valueField: 'id'
-			,hiddenName: 'groupId'
+			,hiddenName: 'materialId'
 			,loadingText: 'Загрузка...'
-			//,lazyRender:true
 			,triggerAction: 'all'     // Проблема решилась этим
 			,typeAhead: true			
 		});
@@ -54,11 +54,11 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 				,items:	[
 				{
 					fieldLabel: 'Наименование'
+					,name: 'name'
 					,allowBlank: false
-				},
-					this.GroupCombo
-				,{
+				},{
 					fieldLabel: 'Код'
+					,name: 'code'
 				}]	
 			},{
 				xtype: 'container'
@@ -73,15 +73,12 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 				,items:	[
 				{
 					fieldLabel: 'Версия'
+					,name: 'version'
 					,labelWidth: 50
-				},{	
-					//xtype: 'combo'
-					fieldLabel: 'Материал'
-					//store: this.comboGroupStore
-					//,displayField: 'name'
-					//,triggerAction: 'all'				
-				},{				
+				},this.MaterialCombo
+				,{				
 					fieldLabel: 'Краткое наименование'
+					,name: 'short_name'
 				}]		
 			},{
 				xtype: 'container'
@@ -96,13 +93,30 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 				,items:	[
 				{
 					fieldLabel: 'Станд. время выполнения'
+					,name: 'execution_time'
 				},{
 					fieldLabel: 'Общий рефер. интервал'
-				}]
+					,name: 'gen_ref_interval'
+				},{
+				   	xtype:'button',
+				   	text:'Сохранить',
+				   	handler:function(){
+				   		//this.fireEvent('baseservicesave',this.record);
+				   		if(this.record) { 
+				   			this.getForm().updateRecord(this.record);				   			
+				   		}
+				   	},
+				   	scope:this
+			    }]
 			}]
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.BaseServiceForm.superclass.initComponent.apply(this, arguments);
+	},
+	
+	setActiveRecord: function(record) {
+		this.record = record;
+		this.getForm().loadRecord(this.record);
 	}
 
 }); //end of baseServiceForm

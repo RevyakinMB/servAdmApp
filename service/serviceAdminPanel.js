@@ -61,14 +61,23 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 		
 		this.TreePanel.on('nodeClick',this.onNodeClick,this);
 		this.ServiceGrid.on('gridcellclick',this.onBaseServGridCellClick,this);
-		
+//		this.InfoTabPanel.BaseServiceForm.on('baseservicesave',this.onBaseServiceSave,this);
 	}
 	,onBaseServGridCellClick: function(grid, rowIndex, columnIndex, e) {
 		var record = grid.getStore().getAt(rowIndex);  // Get the Record
+		
+		this.InfoTabPanel.BaseServiceForm.setActiveRecord(record);
+		
 		var data = record.json.resource_uri;
     	this.InfoTabPanel.ExtendedServiceGrid.store.setBaseParam('base_service', App.uriToId(data));
     	this.InfoTabPanel.ExtendedServiceGrid.store.load();
 	}
+/*	,onBaseServiceSave: function(rec) {
+		if(rec) { 
+			this.InfoTabPanel.BaseServiceForm.getForm().updateRecord(rec);
+			this.ServiceGrid.store.save();
+		} 
+	} */
 	
 	,onNodeClick : function(node,e) {
 		this.ServiceGrid.store.setBaseParam('parent', node.id);

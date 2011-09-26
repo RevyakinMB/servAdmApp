@@ -20,7 +20,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 		});
 		
 		var config = {
-			activeItem:1		
+			activeItem:0		
 	   		,items:[{					
 				title: 'Общая'
 			 	,layout: 'anchor'
