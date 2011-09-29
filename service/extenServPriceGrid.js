@@ -15,8 +15,11 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 					,{ name : 'on_date'}
 				]
 			)
-			,writer: new Ext.data.JsonWriter({encode: false})
-			,proxy: new Ext.data.ScriptTagProxy({
+			,writer: new Ext.data.JsonWriter({
+				encode: false
+				,writeAllFields: true
+			})
+			,proxy: new Ext.data.HttpProxy({ //ScriptTagProxy({
 				url: get_api_url('price')
 			})
 			,restful: true
@@ -50,7 +53,24 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 		    	,width: 70
 		    	,sortable: true
 		    	,dataIndex: 'value' 
-		    }]			
+		    }]
+			,tbar:[{
+            	text:'Добавить'
+            	,tooltip:'Новая расш. услуга'
+            	,iconCls:'silk-add'
+            	,ref: '../addButton'
+            	,disabled: true
+            	//,handler: function() {				
+				//	this.fireEvent ('newrecordclick');
+				//}
+				//,scope:this
+        	}, '-', {
+            	text:'Удалить'
+            	,tooltip:'Удалить выбранную запись'
+            	,iconCls:'silk-delete'
+            	,ref: '../removeButton'
+            	,disabled: true
+        	}]        	
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.ExtenServPriceGrid.superclass.initComponent.apply(this, arguments);

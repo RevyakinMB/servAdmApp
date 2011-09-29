@@ -3,7 +3,7 @@ Ext.ns('App.service');
 App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 	initComponent : function() {
 
-	this.proxy = new Ext.data.ScriptTagProxy({
+	this.proxy = new Ext.data.HttpProxy({  //ScriptTagProxy({
 			url: get_api_url('baseservice')
 		});
 
@@ -16,14 +16,15 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 		,idProperty: 'id'
 	  ,root: 'objects'
 	},[
-		{ name : 'parent', allowBlank: true}
-		,{ name: 'name', allowBlank: true } 
-		,{ name: 'short_name', allowBlank: true}
-		,{ name: 'code', allowBlank: true}						
-		,{ name : 'execution_time', allowBlank: true}
-		,{ name : 'version', allowBlank: true}
-		,{ name : 'material', allowBlank: true}
-		,{ name : 'gen_ref_interval', allowBlank: true} 
+		{ name : 'parent'}
+		,{ name: 'name', allowBlank: false }  // !!!!
+		,{ name: 'short_name' }
+		,{ name: 'code'}						
+		,{ name : 'execution_time'}
+		,{ name : 'version'}
+		,{ name : 'material'}
+		,{ name : 'material_name'}		
+		,{ name : 'gen_ref_interval'} 
 	]);
 		
 	this.writer = new Ext.data.JsonWriter({
@@ -48,72 +49,67 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 	
 	this.columns =  [
 				this.selM
-				,{
-		    	header: "Наименование", 
-		    	width: 200, 
-		    	sortable: true, 
-		    	dataIndex: 'name'
-		    },{
-		    	header: "Краткое наименование", 
-		    	width: 80, 
-		    	sortable: true,
-		    	hidden: true,
-		    	dataIndex: 'short_name'
-		    },{   
-		     	header: "Материал", 
-		    	width: 80, 		 
-		    	dataIndex: 'material'		    			    	
-		    },{
+			,{
 		    	header: "Код", 
 		    	width: 50, 
 		    	dataIndex: 'code' 		    	
+			},{
+		    	header: "Наименование", 
+		    	width: 300, 
+		    	sortable: true, 
+		    	dataIndex: 'name'
 		    },{
-		    	header: "Стандартное время выполнения", 
-		    	width: 70, 
+		    	header: "Время выполнения", 
+		    	width: 100, 
 		    	dataIndex: 'execution_time' 
 		    },{
 		    	header: "Версия", 
 		    	width: 50, 
 		    	dataIndex: 'version' 
+		    },{   
+		     	header: "Материал", 
+		    	width: 80, 		 
+		    	dataIndex: 'material_name'		    			    	
+		    }/*,{
+		    	header: "Краткое наименование", 
+		    	width: 80, 
+		    	sortable: true,
+		    	hidden: true,
+		    	dataIndex: 'short_name'
 		    },{
 		    	header: "Общий референсный интервал", 
-		    	width: 75, 
+		    	width: 95, 
 		    	sortable: true, 
+		    	hidden: true,
 		    	dataIndex: 'gen_ref_interval' 
-		    }
+		    }*/
 		];
 
 		var config = {			
 			id: 'serviceAdm-grid'
-			
+			,forceFit:true
 			,loadMask : {
 				msg : 'Подождите, идет загрузка...'
-			}
-			//,border : false
+			}			
 			,store: this.store
 			,columns:this.columns
 			,sm : this.selM
-	//		,rowselect: function(sm, row, rec) {
-    //                	this.fireEvent('serviceselect', rec); }
-			,tbar: [new Ext.Button({
-				text: "save it"
-				,handler: function() {
-					this.store.save();
-				}
-				,scope: this
-			})]
+			,viewConfig: {
+        		forceFit: true
+			}
+		 
 			,bbar: new Ext.PagingToolbar({
 	            pageSize: 20,
 	            store: this.store,
 	            displayInfo: true,
 	            displayMsg: 'Показана запись {0} - {1} из {2}',
 	            emptyMsg: "Нет записей"
-	        })	        
+	        })
 	        ,listeners: {
 	        	cellclick: function(grid, rowIndex, columnIndex, e) {
-	        		this.fireEvent ('gridcellclick',grid, rowIndex, columnIndex, e);	        	
-	        	}	        	
-	        }
+	       			this.fireEvent ('gridcellclick',grid, rowIndex, columnIndex, e);	        	
+	      		}	        	
+	     	}
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.ServGrid.superclass.initComponent.apply(this, arguments);

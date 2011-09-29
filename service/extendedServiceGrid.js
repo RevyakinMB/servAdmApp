@@ -11,18 +11,28 @@ App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 				,idProperty: 'id'
 	  			,root: 'objects'
 				},[
-					{ name : 'state_name'}
-					,{ name : 'is_active'}
+					{ name: 'id'}
+					,{name : 'state_name'}
+					,{name : 'base_service'}
+					,{name : 'state', allowBlank: false} //Аккуратно здесь!!!!!!
+					,{name : 'is_active'}									
+					,{name: 'is_manual'}
+					,{name: 'state'}
+					,{name: 'tube_count'}					
 				]
 			)
-			,writer: new Ext.data.JsonWriter({encode: false})
-			,proxy: new Ext.data.ScriptTagProxy({
+			,writer: new Ext.data.JsonWriter({
+				encode: false
+				,writeAllFields: true
+			})
+			,proxy: new Ext.data.HttpProxy({ //ScriptTagProxy({
 				url: get_api_url('extendedservice')
 			})
 			,restful: true
-			,autoload: true
+			,autoSave: false
 		});	
-		config = {
+		config = {			
+			
 			loadMask : {	msg : 'Подождите, идет загрузка...' }			
 			,store: this.ExtendedGridStore
 			,sm : new Ext.grid.RowSelectionModel({
@@ -51,15 +61,37 @@ App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 		    		return "<img src='/media/app/servAdmApp/resources/images/icon-"+flag+".gif'>"
 		    	}
 		    }]
-		    
+	    	,tbar:[{
+            	text:'Добавить'
+            	,tooltip:'Новая расш. услуга'
+            	,iconCls:'silk-add'
+            	,ref: '../addButton'
+            	,disabled: true
+            	,handler: function() {				
+					this.fireEvent ('newrecordclick');
+				}
+				,scope:this
+        	}, '-', {
+            	text:'Удалить'
+            	,tooltip:'Удалить выбранную запись'
+            	,iconCls:'silk-delete'
+            	,ref: '../removeButton'
+            	,disabled: true
+            	,handler: function() {				
+					this.fireEvent ('deleterecordclick');
+				}
+				,scope:this
+        	}]
+
 		    ,listeners: {
 	        	cellclick: function(grid, rowIndex, columnIndex, e) {
-	        		this.fireEvent ('gridcellclick',grid, rowIndex, columnIndex, e);
-	        	}
+	        		this.fireEvent ('gridcellclick',grid, rowIndex, columnIndex, e);	        	
+	        	}	        	
 	        }
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.ExtendedServiceGrid.superclass.initComponent.apply(this, arguments);
+				
 	}
 
 }); //end of ExtendedServiceGrid

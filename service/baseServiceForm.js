@@ -14,6 +14,7 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
             	,id: 'id'
         	}, [
 	        	{name: 'name'}
+	        	,{name: 'resource_uri'}
 				,{name: 'id' }
 			])
 		});
@@ -22,11 +23,10 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 
 			store: this.ComboMaterialStore
 			,displayField: 'name'
-			,name: 'material'
+			,valueField: 'resource_uri'
 			,fieldLabel: 'Материал'
-			,allowBlank: true			
-			,valueField: 'id'
-			,hiddenName: 'materialId'
+			,name: 'material'		
+			,allowBlank: true						
 			,loadingText: 'Загрузка...'
 			,triggerAction: 'all'     // Проблема решилась этим
 			,typeAhead: true			
@@ -37,78 +37,84 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 		config = {		
 			layout: 'hbox'
 			,labelWidth: 85
-			,frame: true
-			,layoutConfig: {
-				pack: 'start'
-			}
+			,layoutConfig: { pack: 'start' }
 			,items: [{
+			////
 				xtype: 'container'
-				,style: {
-         	    	padding: '2px'
-        		}
-				,layout: 'form'
-				,defaults: {
-					width: 200					
-				}
+				,width: 380
+				,style: { padding: '2px' }			
 				,defaultType: 'textfield'
-				,items:	[
-				{
-					fieldLabel: 'Наименование'
-					,name: 'name'
-					,allowBlank: false
-				},{
-					fieldLabel: 'Код'
-					,name: 'code'
-				}]	
+			////
+				,items: [{
+			 		xtype: 'fieldset'			 	
+					,title: 'Основное'
+					,autoHeight: true
+					,defaultType: 'textfield'
+					,labelWidth: 135
+					,defaults: {
+						anchor: '-10'
+						,frame: true
+						,width: 150
+					}				
+					,items:	[
+					{
+						fieldLabel: 'Наименование'
+						,name: 'name'
+						,allowBlank: false
+						,emptyText: 'Обязательное поле...'
+					},{				
+						fieldLabel: 'Кратко'
+						,name: 'short_name'
+					},{
+						fieldLabel: 'Код'
+						,name: 'code'
+					}]
+				}]				
 			},{
+				////
 				xtype: 'container'
-				,layout: 'form'
-				,defaults: {
-					width: 200		
-				}
-				,style: {
-         	    	padding: '2px'
-        		}
-				,defaultType: 'textfield'
-				,items:	[
-				{
-					fieldLabel: 'Версия'
-					,name: 'version'
-					,labelWidth: 50
-				},this.MaterialCombo
-				,{				
-					fieldLabel: 'Краткое наименование'
-					,name: 'short_name'
-				}]		
+				,width: 380
+				,style: { padding: '2px' }
+				,items: [{
+				////
+					xtype: 'fieldset'			 	
+					,title: 'Дополнительно'
+					,autoHeight: true
+					,defaultType: 'textfield'
+					,labelWidth: 135
+					,defaults: {
+						anchor: '-10'
+						,frame: true
+						,width: 150
+					}					
+					,items:	[
+					{
+						fieldLabel: 'Версия'
+						,name: 'version'
+						,labelWidth: 50
+					}
+						,this.MaterialCombo
+					,{
+						fieldLabel: 'Станд. время выполнения'
+						,name: 'execution_time'
+					},{
+						fieldLabel: 'Общий рефер. интервал'
+						,name: 'gen_ref_interval'
+					}]
+				}] 
 			},{
-				xtype: 'container'
-				,layout: 'form'
-				,defaults: {
-					width: 200
-				}
-				,style: {
-         	    	padding: '2px'
-        		}
-				,defaultType: 'textfield'
-				,items:	[
-				{
-					fieldLabel: 'Станд. время выполнения'
-					,name: 'execution_time'
-				},{
-					fieldLabel: 'Общий рефер. интервал'
-					,name: 'gen_ref_interval'
-				},{
-				   	xtype:'button',
-				   	text:'Сохранить',
-				   	handler:function(){
-				   		//this.fireEvent('baseservicesave',this.record);
-				   		if(this.record) { 
-				   			this.getForm().updateRecord(this.record);				   			
-				   		}
-				   	},
-				   	scope:this
-			    }]
-			}]
+				xtype:'button',
+				text:'Сохранить (tmp)',
+				handler:function(){
+					//this.fireEvent('baseservicesave',this.record);
+					if(this.record) {
+						if ( this.getForm().isValid() ) {
+							this.getForm().updateRecord(this.record);
+						}
+					}
+				},
+				scope:this
+			}]	
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.BaseServiceForm.superclass.initComponent.apply(this, arguments);

@@ -16,12 +16,12 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 				
 		this.ServiceGrid = new App.service.ServGrid ({
 			id:'grid'
-			,anchor: '100% 55%'
+			,anchor: '100% 45%'
 			,frame: true			
 		});
 		
 		this.InfoTabPanel = new App.service.InfoTabPanel ({
-			anchor: '100% 45%'			
+			anchor: '100% 55%'			
 		});
 		
 		var config = {
@@ -67,8 +67,10 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 		var record = grid.getStore().getAt(rowIndex);  // Get the Record
 		
 		this.InfoTabPanel.BaseServiceForm.setActiveRecord(record);
-		
 		var data = record.json.resource_uri;
+		
+		this.InfoTabPanel.ExtendedServForm.CombOrganizationStore.load();
+		
     	this.InfoTabPanel.ExtendedServiceGrid.store.setBaseParam('base_service', App.uriToId(data));
     	this.InfoTabPanel.ExtendedServiceGrid.store.load();
 	}
