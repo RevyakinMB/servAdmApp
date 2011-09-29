@@ -83,11 +83,6 @@ App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 				,scope:this
         	}]
 
-		    ,listeners: {
-	        	cellclick: function(grid, rowIndex, columnIndex, e) {
-	        		this.fireEvent ('gridcellclick',grid, rowIndex, columnIndex, e);	        	
-	        	}	        	
-	        }
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.ExtendedServiceGrid.superclass.initComponent.apply(this, arguments);

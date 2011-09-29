@@ -62,8 +62,6 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 		});
 		
 		config = {
-			
-			//layout: 'form'
 			bodyStyle:'padding:0px 0px 0px 5px'
 			,items: [{
 			 	xtype: 'fieldset'			 	
@@ -100,9 +98,11 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 				}]
 			},{
 				xtype:'button'
+				,name: 'saveButton'
+				//,ref: '../saveButton'
 				,text:'Сохранить изменения'
-				,id: 'saveBtn'
-//				,anchor: '-200'
+				,id: 'extendedFormsaveBtn'
+				,disabled: true
 				,handler:function(but){				 
 					//but.setDisabled(true);
 					if ( this.getForm().isValid() ) { 

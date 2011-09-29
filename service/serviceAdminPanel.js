@@ -49,37 +49,25 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 		this.on('afterrender', function(){
 			Ext.ux.JSONP.request('http://dev.medhq.ru/webapp/service/groups/', {
             	callbackKey: 'cb',
-            //params: {
-            //},
             	callback: function(data) {
             		this.TreePanel.getRootNode().appendChild(data);
             	},
             	scope:this
-			})
-            
+			})            
 		},this);
 		
 		this.TreePanel.on('nodeClick',this.onNodeClick,this);
-		this.ServiceGrid.on('gridcellclick',this.onBaseServGridCellClick,this);
-//		this.InfoTabPanel.BaseServiceForm.on('baseservicesave',this.onBaseServiceSave,this);
+		this.ServiceGrid.getSelectionModel().on('rowselect',this.onBaseServiceGridSelect,this);
 	}
-	,onBaseServGridCellClick: function(grid, rowIndex, columnIndex, e) {
-		var record = grid.getStore().getAt(rowIndex);  // Get the Record
-		
-		this.InfoTabPanel.BaseServiceForm.setActiveRecord(record);
-		var data = record.json.resource_uri;
-		
-		this.InfoTabPanel.ExtendedServForm.CombOrganizationStore.load();
-		
+	
+	,onBaseServiceGridSelect: function(selModel, rowIndex, rec) {
+				
+		this.InfoTabPanel.BaseServiceForm.setActiveRecord(rec);
+		var data = rec.json.resource_uri;		
+		this.InfoTabPanel.ExtendedServForm.CombOrganizationStore.load();		
     	this.InfoTabPanel.ExtendedServiceGrid.store.setBaseParam('base_service', App.uriToId(data));
     	this.InfoTabPanel.ExtendedServiceGrid.store.load();
 	}
-/*	,onBaseServiceSave: function(rec) {
-		if(rec) { 
-			this.InfoTabPanel.BaseServiceForm.getForm().updateRecord(rec);
-			this.ServiceGrid.store.save();
-		} 
-	} */
 	
 	,onNodeClick : function(node,e) {
 		this.ServiceGrid.store.setBaseParam('parent', node.id);

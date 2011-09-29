@@ -12,12 +12,13 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 		});
 		
 		this.PriceGrid = new App.service.ExtenServPriceGrid ({
-			width: 155
+			width: 195
 			,height: 195
 		});	
 		this.ExtendedServForm = new App.service.ExtenServiceForm({
 			width: 380
 			,height: 195
+			,frame: true
 		});
 		
 		var config = {
@@ -51,61 +52,42 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.InfoTabPanel.superclass.initComponent.apply(this, arguments);
 			
-		this.ExtendedServiceGrid.on('gridcellclick',this.onExtServGridCellClick,this);
+		this.ExtendedServiceGrid.getSelectionModel().on('rowselect',this.onExtendedServiceGridSelect,this);
 		this.ExtendedServiceGrid.on('newrecordclick',this.onNewRecordClick,this);
 		this.ExtendedServiceGrid.on('deleterecordclick',this.onDeleteRecordClick,this);
 		
 		this.ExtendedServForm.on('formsave',this.onFormSave,this);
 		
 		this.ExtendedServiceGrid.store.on('load', this.onExtendedServiceLoad, this);
-		/*function() {
-			this.ExtendedServiceGrid.addButton.setDisabled(false);
-			this.PriceGrid.addButton.setDisabled(false);
-			var sm = this.ExtendedServiceGrid.getSelectionModel();
-			sm.selectFirstRow();
-			if (sm.getCount() == 1 ) {
-				var record = sm.getSelected()  // Get the Record
-				var data = record.json.resource_uri;	
-				this.PriceGrid.store.setBaseParam('extended_service', App.uriToId(data));
-		    	this.PriceGrid.store.load();		    	
-		    	this.ExtendedServForm.setActiveRecord(record);
-		} 	
-			
-		},this); */
+		
 	}
+	
 	,onExtendedServiceLoad: function() {
-		this.ExtendedServiceGrid.addButton.setDisabled(false);
-		this.PriceGrid.addButton.setDisabled(false);
+		this.ExtendedServiceGrid.addButton.setDisabled(false);		
 		var sm = this.ExtendedServiceGrid.getSelectionModel();
 		sm.selectFirstRow();
-		if (sm.getCount() == 1 ) {
-			this.ExtendedServiceGrid.removeButton.setDisabled(false);
-			var record = sm.getSelected()  // Get the Record
-			var data = record.json.resource_uri;	
-			this.PriceGrid.store.setBaseParam('extended_service', App.uriToId(data));
-		   	this.PriceGrid.store.load();		    	
-		   	this.ExtendedServForm.setActiveRecord(record);
-		}
+		if (sm.getCount() == 0 ) { 
+			this.ExtendedServiceGrid.removeButton.setDisabled(true);
+			//this.ExtendedServForm.getForm().findField('saveButton').setDisabled(true); // WHY?! this "is null"???
+			Ext.getCmp("extendedFormsaveBtn").setDisabled(true);
+		}		
 	}	
+	
 	,onDeleteRecordClick: function () {
 		Ext.MessageBox.show({
            title:'Удалить запись?'
-           ,msg: 'Вы выбрали удалить расширенную услугу. <br />Продолжить?'
+           ,msg: 'Вы выбрали удаление расширенной услуги. <br />Продолжить?'
            ,buttons: Ext.MessageBox.YESNO
            ,fn: function(btn) { 
-           		if (btn == "yes") {
-           			var price_sel = this.PriceGrid.getSelectionModel();           		
-					for (var i=0; i < price_sel.getCount(); i++ ) {
-						price_sel.selectFirstRow();					
-           				var s = price_sel.getSelected();
-               	    	this.PriceGrid.store.remove(s); //сначала удалить все записи в таблице цен
-           			}           		
-           			s = this.ExtendedServiceGrid.getSelectionModel().getSelections();
-           			for(var i = 0, r; r = s[i]; i++){
-                	    this.ExtendedServiceGrid.store.remove(r); //затем удалить и расширенную услугу
-           			}
+           		if (btn == "yes") {    
+           			this.ExtendedServiceGrid.removeButton.setDisabled(true);
+           			s = this.ExtendedServiceGrid.getSelectionModel().getSelected();           			
+                	this.ExtendedServiceGrid.store.remove(s);           			
            		}
            		this.ExtendedServiceGrid.store.save();
+           		this.ExtendedServiceGrid.store.on('save', function() {
+					this.ExtendedServiceGrid.store.load();
+				},this); 
            	}
            	,scope: this
          	,icon: Ext.MessageBox.QUESTION
@@ -114,9 +96,44 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 	
 	
 	,onNewRecordClick: function() {
-		this.ExtendedServForm.record = null;
+		/*this.ExtendedServForm.record = null;
 		this.ExtendedServForm.clearFields();
-		this.ExtendedServiceGrid.getSelectionModel().clearSelections();	
+		this.ExtendedServiceGrid.getSelectionModel().clearSelections();*/
+		this.new_form =  new App.service.ExtenServiceForm({
+			width: 380
+			,height: 195
+			,frame: true
+		});
+		if (!this.winForm) {
+			this.winForm = new Ext.Window ({
+				width: 500
+				,height : 350
+				,title: 'Новая расширенная услуга'
+				//,layout: 'fit'
+				,items: [this.new_form,{
+					xtype: 'button'
+					,text: 'Save'
+					,handler: function() {
+						this.winForm.close();
+					}
+					,scope: this
+				}]
+				,modal: true
+			});						
+		}
+		//winForm.ExtendedServForm.getForm().findField('base_service').setValue();
+		//updateRecord(this.ExtendedServiceGrid.getSelectionModel().getSelected());
+		this.winForm.show();
+		this.winForm.on('close', function() {
+			var p = new this.ExtendedServiceGrid.store.recordType();
+			this.new_form.getForm().updateRecord(p);
+			this.ExtendedServiceGrid.store.insert(0,p);
+			this.ExtendedServiceGrid.store.save();
+			this.ExtendedServiceGrid.store.on('save', function() {
+				this.ExtendedServiceGrid.store.load();
+			},this);
+		},this );
+		
 		
 	}
 	,onFormSave: function(rec) {
@@ -124,15 +141,6 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 			this.ExtendedServForm.getForm().updateRecord(rec);
 			this.ExtendedServiceGrid.store.save();
 		} else {
-	/*		this.extServiceModel = new Ext.data.Record.create([
-				//{ name: 'id'}
-				{name : 'is_active'}									
-				,{name: 'is_manual'}
-				,{name: 'state'}
-				,{name: 'tube_count'}
-	        ]);
- 			//var record = new this.extServiceModel(); */
-	        
  			var p = new this.ExtendedServiceGrid.store.recordType();
  			this.ExtendedServForm.getForm().updateRecord(p);
 			this.ExtendedServiceGrid.store.insert(0,p);
@@ -141,16 +149,16 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 				this.ExtendedServiceGrid.store.load();
 			},this);
 		}				
-	}
+	}	
 	
-	,onExtServGridCellClick: function(grid, rowIndex, columnIndex, e) {
-		var record = grid.getStore().getAt(rowIndex);  // Get the Record
-		var data = record.json.resource_uri;			
-		
-		this.ExtendedServForm.setActiveRecord(record);
-		
+	,onExtendedServiceGridSelect: function(selModel, rowIndex, rec) {
+		this.ExtendedServiceGrid.removeButton.setDisabled(false);
+		var data = rec.json.resource_uri;					
+		this.ExtendedServForm.setActiveRecord(rec);		
     	this.PriceGrid.store.setBaseParam('extended_service', App.uriToId(data));
     	this.PriceGrid.store.load();
+    	//this.ExtendedServForm.getForm().findField('saveButton').setDisabled(false); // WHY?! this "is null"???    	
+    	Ext.getCmp("extendedFormsaveBtn").setDisabled(false);
 	}
 		
 });

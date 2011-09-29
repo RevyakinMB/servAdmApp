@@ -105,11 +105,11 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 	            displayMsg: 'Показана запись {0} - {1} из {2}',
 	            emptyMsg: "Нет записей"
 	        })
-	        ,listeners: {
+	   /*     ,listeners: {
 	        	cellclick: function(grid, rowIndex, columnIndex, e) {
 	       			this.fireEvent ('gridcellclick',grid, rowIndex, columnIndex, e);	        	
 	      		}	        	
-	     	}
+	     	}*/
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.ServGrid.superclass.initComponent.apply(this, arguments);
