@@ -62,8 +62,8 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 		});
 		
 		config = {
-			bodyStyle:'padding:0px 0px 0px 5px'
-			,items: [{
+			//bodyStyle:'padding:0px 0px 0px 5px'
+			items: [{
 			 	xtype: 'fieldset'			 	
 				,title: 'Расширенная услуга'
 				,autoHeight: true
@@ -96,7 +96,7 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 					xtype: 'hidden'
 					,name:'base_service'
 				}]
-			},{
+			}/*,{
 				xtype:'button'
 				,name: 'saveButton'
 				//,ref: '../saveButton'
@@ -110,7 +110,7 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 					}
 				}
 				,scope:this			
-			}]
+			}*/]
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.ExtenServiceForm.superclass.initComponent.apply(this, arguments);

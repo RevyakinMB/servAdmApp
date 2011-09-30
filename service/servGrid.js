@@ -17,13 +17,14 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 	  ,root: 'objects'
 	},[
 		{ name : 'parent'}
+		,{ name : 'resource_uri'}
 		,{ name: 'name', allowBlank: false }  // !!!!
 		,{ name: 'short_name' }
 		,{ name: 'code'}						
 		,{ name : 'execution_time'}
 		,{ name : 'version'}
 		,{ name : 'material'}
-		,{ name : 'material_name'}		
+		,{ name : 'material_name'}			
 		,{ name : 'gen_ref_interval'} 
 	]);
 		

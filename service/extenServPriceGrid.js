@@ -138,10 +138,27 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
             	,iconCls:'silk-delete'
             	,ref: '../removeButton'
             	,disabled: true
-            	/*,handler: function() {
-            		// ДОБАВИТЬ УДАЛЕНИЕ ЦЕНЫ!!!!!!!!
-            	}
-            	,scope:this*/
+            	,handler: function () {
+					Ext.MessageBox.show({
+			           title:'Удалить запись?'
+			           ,msg: 'Вы выбрали удаление цены. <br />Продолжить?'
+			           ,buttons: Ext.MessageBox.YESNO
+			           ,fn: function(btn) { 
+			           		if (btn == "yes") {    
+			           			this.removeButton.setDisabled(true);
+			           			s = this.getSelectionModel().getSelected();           			
+			                	this.store.remove(s);           			
+			           		}
+			           		//this.ExtendedServiceGrid.store.save();
+			           		this.store.on('remove', function() {
+								this.load();
+							}); 
+			           	}
+			           	,scope: this
+			         	,icon: Ext.MessageBox.QUESTION
+			       });
+				}
+            	,scope:this
         	}]        	
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));

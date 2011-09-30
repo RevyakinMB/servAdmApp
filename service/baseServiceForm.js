@@ -106,7 +106,6 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 				xtype:'button',
 				text:'Сохранить (tmp)',
 				handler:function(){
-					//this.fireEvent('baseservicesave',this.record);
 					if(this.record) {
 						if ( this.getForm().isValid() ) {
 							this.getForm().updateRecord(this.record);

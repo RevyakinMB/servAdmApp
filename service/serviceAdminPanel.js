@@ -67,6 +67,8 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 		this.InfoTabPanel.ExtendedServForm.CombOrganizationStore.load();		
     	this.InfoTabPanel.ExtendedServiceGrid.store.setBaseParam('base_service', App.uriToId(data));
     	this.InfoTabPanel.ExtendedServiceGrid.store.load();
+    	this.InfoTabPanel.ExtendedServForm.getForm().findField('base_service').setValue(
+    		this.ServiceGrid.getSelectionModel().getSelected().get('resource_uri'));
 	}
 	
 	,onNodeClick : function(node,e) {
