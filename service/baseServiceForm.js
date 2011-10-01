@@ -1,9 +1,48 @@
 Ext.ns('App.service');
 
+App.service.MaterialCombo = Ext.extend(Ext.form.ComboBox, {
+	
+	initComponent : function(){
+		
+		this.MaterialComboStore = new Ext.data.Store({
+	       	proxy: new Ext.data.ScriptTagProxy({
+	           	url: get_api_url('material')
+	       	})
+	       	,autoLoad: true
+	       	,reader: new Ext.data.JsonReader({
+			    root: 'objects'
+	          	,totalProperty: 'meta.total_count'
+	           	,id: 'id'
+	       	}, [
+		       	{name: 'name'}
+		       	,{name: 'resource_uri'}
+				,{name: 'id' }
+			])
+		});
+		config = {
+			store: this.MaterialComboStore
+			,displayField: 'name'
+			,valueField: 'resource_uri'
+			,fieldLabel: 'Материал'
+			,name: 'material'		
+			,allowBlank: true						
+			,loadingText: 'Загрузка...'
+			,triggerAction: 'all'     // Проблема решилась этим
+			,typeAhead: true		
+		}
+		Ext.apply(this, Ext.apply(this.initialConfig, config));
+		App.service.MaterialCombo.superclass.initComponent.apply(this, arguments);
+		
+	}
+});
+
+Ext.reg('materialcombo', App.service.MaterialCombo);
+
+
 App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 	initComponent : function(){
 				
-		this.ComboMaterialStore = new Ext.data.Store({
+		/*this.ComboMaterialStore = new Ext.data.Store({
         	proxy: new Ext.data.ScriptTagProxy({
             	url: get_api_url('material')
         	})
@@ -31,8 +70,8 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 			,triggerAction: 'all'     // Проблема решилась этим
 			,typeAhead: true			
 		});
-		
-/////////////////// Base Service's Common Info Tab configuration////////////////
+*/		
+		this.MaterialCombo = new App.service.MaterialCombo({});
 		
 		config = {		
 			layout: 'hbox'
@@ -61,7 +100,7 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 						fieldLabel: 'Наименование'
 						,name: 'name'
 						,allowBlank: false
-						,emptyText: 'Обязательное поле...'
+						,emptyText: 'required'
 					},{				
 						fieldLabel: 'Кратко'
 						,name: 'short_name'
@@ -93,12 +132,12 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 						,name: 'version'
 						,labelWidth: 50
 					}
-						,this.MaterialCombo
+						,this.MaterialCombo						
 					,{
 						fieldLabel: 'Станд. время выполнения'
 						,name: 'execution_time'
 					},{
-						fieldLabel: 'Общий рефер. интервал'
+						fieldLabel: 'Общий рефер. интервал'						
 						,name: 'gen_ref_interval'
 					}]
 				}] 

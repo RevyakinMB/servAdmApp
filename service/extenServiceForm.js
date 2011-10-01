@@ -26,7 +26,7 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			,fieldLabel: 'Организация'	
 			,name: 'state'			
 			,allowBlank: false
-			,emptyText: 'Обязательное поле...' 	
+			,emptyText: 'required' 	
 			,loadingText: 'Загрузка...'
 			,triggerAction: 'all'     
 			,typeAhead: true			

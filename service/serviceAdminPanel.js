@@ -58,10 +58,38 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 		
 		this.TreePanel.on('nodeClick',this.onNodeClick,this);
 		this.ServiceGrid.getSelectionModel().on('rowselect',this.onBaseServiceGridSelect,this);
+		this.ServiceGrid.on('newrecordclick', this.onNewServiceClick, this);
+		this.ServiceGrid.store.on('load', function() {				
+				this.ServiceGrid.getSelectionModel().selectFirstRow();
+		}, this);
+		
 	}
 	
-	,onBaseServiceGridSelect: function(selModel, rowIndex, rec) {
-				
+	,onNewServiceClick: function() {
+		if (!this.ServiceWindow) {
+			this.ServiceWindow = new App.service.ServiceWindow ();
+		}
+		this.ServiceWindow.show();
+		this.ServiceWindow.on('hide', function() {
+			if (this.ServiceWindow.action == "add") {
+				var a = this.ServiceGrid.store.baseParams.parent;
+				this.ServiceWindow.MainFormPanel.
+							getForm().findField('parent').setValue(
+								"/api/v1/dashboard/baseservice/" + a);									
+				var p = new this.ServiceGrid.store.recordType();
+				this.ServiceWindow.MainFormPanel.getForm().updateRecord(p);
+				this.ServiceWindow.AdditionalFormPanel.getForm().updateRecord(p);
+				this.ServiceGrid.store.insert(0,p);
+				this.ServiceGrid.store.save();
+				this.ServiceGrid.store.on('save', function() {
+					this.ServiceGrid.store.load();
+				},this);
+			}
+		},this);
+	}
+	
+	,onBaseServiceGridSelect: function(selModel, rowIndex, rec) {				
+		this.ServiceGrid.removeButton.setDisabled(false);
 		this.InfoTabPanel.BaseServiceForm.setActiveRecord(rec);
 		var data = rec.json.resource_uri;		
 		this.InfoTabPanel.ExtendedServForm.CombOrganizationStore.load();		
@@ -72,8 +100,10 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 	}
 	
 	,onNodeClick : function(node,e) {
+		this.ServiceGrid.removeButton.setDisabled(true);
 		this.ServiceGrid.store.setBaseParam('parent', node.id);
 		this.ServiceGrid.store.load();
+		this.ServiceGrid.addButton.setDisabled(false);
 	}
 });
 

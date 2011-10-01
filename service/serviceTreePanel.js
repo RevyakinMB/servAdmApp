@@ -20,8 +20,8 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 		        ,text: 'Услуги клиники'
 		        ,draggable: false
 		        ,id: 'source'	        	
-	        },
-	        listeners:{
+	        }
+	        ,listeners:{
 	        	click:function(node,e){
 	        			this.fireEvent('nodeClick',node,e);
 	        	}
@@ -34,33 +34,33 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 	        }
 		    	,tbar: [new Ext.form.TextField({
 		    		id:'service-tree-filter'
-		        ,width: 250
-						,emptyText:'Поиск по названию'
-            ,enableKeyEvents: true
-						,listeners:{
-							render: function(f){
-              	this.filter = new Ext.tree.TreeFilter(this, {
-              		clearBlank: true
-               		,autoClear: true
-               	});
-							}
-              ,keydown: {
-              	fn: this.filterTree
-                ,buffer: 350
-                ,scope: this
-              }
-              ,scope: this
+		    	    ,width: 195
+					,emptyText:'Поиск по названию'
+            		,enableKeyEvents: true
+					,listeners:{
+						render: function(f){
+              				this.filter = new Ext.tree.TreeFilter(this, {
+              					clearBlank: true
+               					,autoClear: true
+               				});
 						}
-		    	})
-		    	,'->'
-		    	,{
-		    		iconCls:'x-tbar-loading'
-		    		,handler:function(){
-		    			this.getLoader().load(this.getRootNode());
-			    	}
-		    		,scope:this
-			    }]
-				};
+	                ,keydown: {
+              			fn: this.filterTree
+                		,buffer: 350
+                		,scope: this
+              		}
+              		,scope: this
+				}
+		    })
+		    ,'->'
+		    ,{
+		    	iconCls:'x-tbar-loading'
+		    	,handler:function(){
+		    		this.getLoader().load(this.getRootNode());
+			   	}
+		    	,scope:this
+			}]
+		};
 
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.ServicePanel.Tree.superclass.initComponent.apply(this, arguments);

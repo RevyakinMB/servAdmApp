@@ -34,7 +34,7 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 	});
 	
 	this.store = new Ext.data.Store({	
-  		autoSave: true  		
+  		autoSave: false  		
 		,restful: true
 		,proxy: this.proxy
     	,reader: this.reader
@@ -106,11 +106,48 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 	            displayMsg: 'Показана запись {0} - {1} из {2}',
 	            emptyMsg: "Нет записей"
 	        })
-	   /*     ,listeners: {
-	        	cellclick: function(grid, rowIndex, columnIndex, e) {
-	       			this.fireEvent ('gridcellclick',grid, rowIndex, columnIndex, e);	        	
-	      		}	        	
-	     	}*/
+	        ,tbar: [{
+	        	xtype: 'button'
+	        	,text: 'Новая услуга'
+	        	,tooltip:'Добавить новую запись'
+            	,iconCls:'silk-add'
+            	,ref: '../addButton'
+            	,disabled: true
+            	,handler: function() {            		
+            		this.fireEvent('newrecordclick');
+            	}
+            	,scope: this	        	
+	        },'-',{	        	
+				xtype: 'button'
+	        	,text: 'Удалить услугу'
+	        	,tooltip:'Удалить выбранную запись'
+            	,iconCls:'silk-delete'
+            	,ref: '../removeButton'
+            	,disabled: true
+            	,handler: function() {            			
+					Ext.MessageBox.show({
+			           title:'Удалить запись?'
+			           ,width: 300
+			           ,msg: 'Вы выбрали удаление услуги. <br />Продолжить?'
+			           ,buttons: Ext.MessageBox.YESNO
+			           ,fn: function(btn) { 
+			           		if (btn == "yes") {    
+			           			this.removeButton.setDisabled(true);
+			           			s = this.getSelectionModel().getSelected();           			
+			                	this.store.remove(s);           			
+			           		}
+			           		this.store.save();
+			           		this.store.on('save', function() {
+								this.store.load();
+							},this); 
+			           	}
+			           	,scope: this
+			         	,icon: Ext.MessageBox.QUESTION
+			       });
+				}
+            	//this.fireEvent('deleterecordclick');            	
+            	,scope: this	        		        
+	        }]
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.ServGrid.superclass.initComponent.apply(this, arguments);

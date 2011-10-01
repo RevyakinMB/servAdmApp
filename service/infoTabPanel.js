@@ -100,6 +100,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 	,onDeleteRecordClick: function () {
 		Ext.MessageBox.show({
            title:'Удалить запись?'
+           ,width: 340
            ,msg: 'Вы выбрали удаление расширенной услуги. <br />Продолжить?'
            ,buttons: Ext.MessageBox.YESNO
            ,fn: function(btn) { 

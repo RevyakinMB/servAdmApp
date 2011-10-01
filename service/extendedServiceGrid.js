@@ -14,7 +14,7 @@ App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 					{ name: 'id'}
 					,{name : 'state_name'}
 					,{name : 'base_service'}
-					,{name : 'state', allowBlank: false} //Аккуратно здесь!!!!!!
+					,{name : 'state', allowBlank: false}
 					,{name : 'is_active'}									
 					,{name: 'is_manual'}
 					,{name: 'state'}
