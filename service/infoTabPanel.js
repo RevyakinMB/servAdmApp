@@ -25,6 +25,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 			activeItem:1
 	   		,items:[{					
 				title: 'Общая информация'
+				,id: 'commonTab'
 			 	,layout: 'anchor'
 			 	,frame: true
 			 	,items: [
@@ -32,6 +33,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 			 	]			 		
 		   	},{
 		    	title: 'Исполнители'
+		    	,id: 'extendedTab'
 		    	,layout: 'hbox'
 				,frame: true
 				,layoutConfig: {
@@ -60,9 +62,10 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 						}*/]					
 					}
 				]			    
-		  	}/*,{
+		  	},{
 		    	title: 'Операции'
-	      }*/]
+		    	,frame: true
+	      }]
 	      ,bbar: [{
 	      	xtype: 'button'
 	      	,iconCls:'silk-accept'

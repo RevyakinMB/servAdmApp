@@ -145,11 +145,13 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 		if (!this.ServiceWindow) {
 			this.ServiceWindow = new App.service.ServiceWindow ();
 		}
+		this.disable();
 		this.ServiceWindow.ParentChoicePanel.disable();
 		this.ServiceWindow.setTitle('Добавление новой услуги');
 		this.ServiceWindow.ParentChoicePanel.setTitle(' ');
 		this.ServiceWindow.show();
 		this.ServiceWindow.on('hide', function() {
+			this.enable();
 			if (this.ServiceWindow.action == "add") {
 				var a = this.ServiceGrid.store.baseParams.parent;
 				this.ServiceWindow.MainFormPanel.
@@ -168,15 +170,27 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 	}
 	
 	,onBaseServiceGridSelect: function(selModel, rowIndex, rec) {
-		this.InfoTabPanel.saveButton.setDisabled(false);
-		this.ServiceGrid.removeButton.setDisabled(false);
-		this.InfoTabPanel.BaseServiceForm.setActiveRecord(rec);
-		var data = rec.json.resource_uri;		
-		this.InfoTabPanel.ExtendedServForm.CombOrganizationStore.load();		
-    	this.InfoTabPanel.ExtendedServiceGrid.store.setBaseParam('base_service', App.uriToId(data));
-    	this.InfoTabPanel.ExtendedServiceGrid.store.load();
-    	this.InfoTabPanel.ExtendedServForm.getForm().findField('base_service').setValue(
-    		this.ServiceGrid.getSelectionModel().getSelected().get('resource_uri'));
+		// ДОБАВИТЬ МНОЖЕСТВЕНОЕ ВЫДЕЛЕНИЕ!
+		if (selModel.getCount() == 1) {	
+			Ext.getCmp("extendedTab").enable();
+			Ext.getCmp("commonTab").enable();
+			
+			this.InfoTabPanel.saveButton.setDisabled(false);
+			this.ServiceGrid.removeButton.setDisabled(false);
+			this.InfoTabPanel.BaseServiceForm.setActiveRecord(rec);
+			var data = rec.json.resource_uri;		
+			this.InfoTabPanel.ExtendedServForm.CombOrganizationStore.load();		
+	    	this.InfoTabPanel.ExtendedServiceGrid.store.setBaseParam('base_service', App.uriToId(data));
+	    	this.InfoTabPanel.ExtendedServiceGrid.store.load();
+	    	this.InfoTabPanel.ExtendedServForm.getForm().findField('base_service').setValue(
+	    		this.ServiceGrid.getSelectionModel().getSelected().get('resource_uri'));
+		
+		} else {
+			this.InfoTabPanel.setActiveTab(2);
+			Ext.getCmp("extendedTab").disable();
+			Ext.getCmp("commonTab").disable();
+			
+		}
 	}
 	
 	,onNodeClick : function(node,e) {
