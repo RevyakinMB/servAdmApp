@@ -7,13 +7,13 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 		
 		this.ExtendedServiceGrid = new App.service.ExtendedServiceGrid ({
 			width: 170
-			,height: 195
+			,height: 175
 			,layout: 'hbox'
 		});
 		
 		this.PriceGrid = new App.service.ExtenServPriceGrid ({
 			width: 195
-			,height: 195
+			,height: 175
 		});	
 		this.ExtendedServForm = new App.service.ExtenServiceForm({
 			width: 380
@@ -23,17 +23,15 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 		
 		var config = {
 			activeItem:1
-			//,forceLayout : true 
-			//,deferredRender: false
 	   		,items:[{					
-				title: 'Общая'
+				title: 'Общая информация'
 			 	,layout: 'anchor'
 			 	,frame: true
 			 	,items: [
 			 		this.BaseServiceForm
 			 	]			 		
 		   	},{
-		    	title: 'Расширенная'
+		    	title: 'Исполнители'
 		    	,layout: 'hbox'
 				,frame: true
 				,layoutConfig: {
@@ -47,7 +45,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 						,style: { padding: '0px 0px 0px 3px' }
 						,items: [
 							this.ExtendedServForm
-						,{
+						/*,{
 							xtype:'button'
 							,name: 'saveButton'							
 							,text:'Сохранить изменения'
@@ -59,11 +57,23 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 								}
 							}
 							,scope:this.ExtendedServForm			
-						}]					
+						}*/]					
 					}
 				]			    
-		  	},{
+		  	}/*,{
 		    	title: 'Операции'
+	      }*/]
+	      ,bbar: [{
+	      	xtype: 'button'
+	      	,iconCls:'silk-accept'
+	      	,ref: '../saveButton'
+	      	,text: 'Сохранить изменения'
+	      	,width: 150
+	      	,disabled: true
+	      	,handler: function() {
+	      		this.fireEvent('formsave');	
+	      	}
+	      	,scope: this
 	      }]
 		}
 		
@@ -74,7 +84,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 		this.ExtendedServiceGrid.on('newrecordclick',this.onNewRecordClick,this);
 		this.ExtendedServiceGrid.on('deleterecordclick',this.onDeleteRecordClick,this);
 		
-		this.ExtendedServForm.on('formsave',this.onFormSave,this);
+		/*this.ExtendedServForm.on('formsave',this.onFormSave,this);*/
 		
 		this.ExtendedServiceGrid.store.on('load', this.onExtendedServiceLoad, this);
 		
@@ -93,7 +103,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 					this.ExtendedServiceGrid.getSelectionModel().getSelected().get('base_service'));*/
 			this.ExtendedServiceGrid.removeButton.setDisabled(true);
 			//this.ExtendedServForm.getForm().findField('saveButton').setDisabled(true); // WHY?! this "is null"???
-			Ext.getCmp("extendedFormsaveBtn").setDisabled(true);
+			//Ext.getCmp("extendedFormsaveBtn").setDisabled(true);
 		}		
 	}	
 	
@@ -173,7 +183,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 		}
 		this.newServiceWindow.show();		
 	}
-	,onFormSave: function(rec) {
+	/*,onFormSave: function(rec) {
 		if (rec) {
 			this.ExtendedServForm.getForm().updateRecord(rec);
 			this.ExtendedServiceGrid.store.save();
@@ -186,7 +196,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 				this.ExtendedServiceGrid.store.load();
 			},this);
 		}				
-	}	
+	}*/	
 	
 	,onExtendedServiceGridSelect: function(selModel, rowIndex, rec) {
 		this.ExtendedServiceGrid.removeButton.setDisabled(false);
@@ -195,7 +205,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
     	this.PriceGrid.store.setBaseParam('extended_service', App.uriToId(data));
     	this.PriceGrid.store.load();
     	//this.ExtendedServForm.getForm().findField('saveButton').setDisabled(false); // WHY?! this "is null"???    	
-    	Ext.getCmp("extendedFormsaveBtn").setDisabled(false);
+    	//Ext.getCmp("extendedFormsaveBtn").setDisabled(false);
 	}
 		
 });

@@ -13,8 +13,6 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 	        ,animate: false
 	        ,containerScroll: true
 	        ,autoScroll: true
-	        
-	        ,rootVisible: false
 	        ,root:{
 		        nodeType: 'async'
 		        ,text: 'Услуги клиники'
@@ -23,7 +21,7 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 	        }
 	        ,listeners:{
 	        	click:function(node,e){
-	        			this.fireEvent('nodeClick',node,e);
+	        		this.fireEvent('nodeClick',node,e);
 	        	}
 	        }
 	        ,keys:{
@@ -32,19 +30,19 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 	        		console.dir(arguments);
 	        	}
 	        }
-		    	,tbar: [new Ext.form.TextField({
-		    		id:'service-tree-filter'
-		    	    ,width: 195
-					,emptyText:'Поиск по названию'
-            		,enableKeyEvents: true
-					,listeners:{
-						render: function(f){
-              				this.filter = new Ext.tree.TreeFilter(this, {
-              					clearBlank: true
-               					,autoClear: true
-               				});
-						}
-	                ,keydown: {
+	    	,tbar: [new Ext.form.TextField({
+	    		id:'service-tree-filter'
+	    	    ,width: 175
+				,emptyText:'Поиск по названию'
+        		,enableKeyEvents: true
+				,listeners:{
+					render: function(f){
+          				this.filter = new Ext.tree.TreeFilter(this, {
+          					clearBlank: true
+           					,autoClear: true
+           				});
+					}
+                	,keydown: {
               			fn: this.filterTree
                 		,buffer: 350
                 		,scope: this
@@ -52,12 +50,25 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
               		,scope: this
 				}
 		    })
-		    ,'->'
-		    ,{
+	    	,'->'
+	    	,{
+		    	iconCls:'silk-add'
+		    	,handler:function(){
+		    		this.fireEvent('servicegroupadd');
+			   	}
+		    	,scope:this
+			},{
 		    	iconCls:'x-tbar-loading'
 		    	,handler:function(){
-		    		this.getLoader().load(this.getRootNode());
-			   	}
+				   	Ext.ux.JSONP.request('http://dev.medhq.ru/webapp/service/groups/', {
+		            	callbackKey: 'cb',
+		            	callback: function(data) {
+		            		this.getRootNode().removeAll();
+		            		this.getRootNode().appendChild(data);
+		            	},
+		            	scope:this
+					})
+				}
 		    	,scope:this
 			}]
 		};
@@ -66,11 +77,11 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 		App.ServicePanel.Tree.superclass.initComponent.apply(this, arguments);
 		
 		this.getSelectionModel().on('beforeselect', function(sm, node){
-	  	return node.isLeaf();
-	  });
-	},
+	  		return node.isLeaf();
+	  	});
+	}
 	
-	filterTree: function(t, e){
+	,filterTree: function(t, e){
 		var text = t.getValue();
 		Ext.each(this.hiddenPkgs, function(n){
 			n.ui.show();

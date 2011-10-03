@@ -22,9 +22,9 @@ App.service.MaterialCombo = Ext.extend(Ext.form.ComboBox, {
 		config = {
 			store: this.MaterialComboStore
 			,displayField: 'name'
-			,valueField: 'resource_uri'
-			,fieldLabel: 'Материал'
-			,name: 'material'		
+			,valueField: 'resource_uri' // имя поля, данные из которого подгружаюся в combo для хранения
+			,fieldLabel: 'Материал' 
+			,name: 'material' //имя поля, данные из которого подгружаюся в combo для отображения	
 			,allowBlank: true						
 			,loadingText: 'Загрузка...'
 			,triggerAction: 'all'     // Проблема решилась этим
@@ -103,6 +103,7 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 						,emptyText: 'required'
 					},{				
 						fieldLabel: 'Кратко'
+						,allowBlank: false
 						,name: 'short_name'
 					},{
 						fieldLabel: 'Код'
@@ -141,7 +142,7 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 						,name: 'gen_ref_interval'
 					}]
 				}] 
-			},{
+			}/*,{
 				xtype:'button',
 				text:'Сохранить (tmp)',
 				handler:function(){
@@ -152,7 +153,7 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 					}
 				},
 				scope:this
-			}]	
+			}*/]	
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.BaseServiceForm.superclass.initComponent.apply(this, arguments);

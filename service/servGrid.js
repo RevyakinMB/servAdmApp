@@ -3,11 +3,9 @@ Ext.ns('App.service');
 App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 	initComponent : function() {
 
-	this.proxy = new Ext.data.HttpProxy({  //ScriptTagProxy({
+	/*this.proxy = new Ext.data.HttpProxy({  //ScriptTagProxy({
 			url: get_api_url('baseservice')
 		});
-
-	this.selM = new Ext.grid.CheckboxSelectionModel();	
 	
 	this.reader = new Ext.data.JsonReader({
 		totalProperty: 'meta.total_count'
@@ -23,6 +21,7 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 		,{ name: 'code'}						
 		,{ name : 'execution_time'}
 		,{ name : 'version'}
+		,{ name : 'is_group'}
 		,{ name : 'material'}
 		,{ name : 'material_name'}			
 		,{ name : 'gen_ref_interval'} 
@@ -34,7 +33,7 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 	});
 	
 	this.store = new Ext.data.Store({	
-  		autoSave: false  		
+  		autoSave: true  		
 		,restful: true
 		,proxy: this.proxy
     	,reader: this.reader
@@ -46,7 +45,30 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 			,sort : 'sort'
 			,dir : 'dir'
 		}
-	});	
+	});	*/
+	
+	//this.store = this.store || new App.service.ServiceGridStore({});
+		
+	this.store = this.store || new Ext.data.RESTStore({
+		autoSave: true
+		,autoLoad: false
+		,apiUrl: get_api_url('baseservice')
+		,model: [
+			{ name : 'parent'}
+			,{ name: 'resource_uri'}
+			,{ name: 'name', allowBlank: false }  // !!!!
+			,{ name: 'short_name' }
+			,{ name: 'code'}						
+			,{ name : 'execution_time'}
+			,{ name : 'version'}
+			,{ name : 'is_group'}
+			,{ name : 'material'}
+			,{ name : 'material_name'}			
+			,{ name : 'gen_ref_interval'} 
+		]
+	});
+	
+	this.selM = new Ext.grid.CheckboxSelectionModel();
 	
 	this.columns =  [
 				this.selM
@@ -136,7 +158,7 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 			           			s = this.getSelectionModel().getSelected();           			
 			                	this.store.remove(s);           			
 			           		}
-			           		this.store.save();
+			           		//this.store.save();
 			           		this.store.on('save', function() {
 								this.store.load();
 							},this); 

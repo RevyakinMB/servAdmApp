@@ -1,4 +1,6 @@
 
+.silk-accept { background-image: url(icons/accept.png) !important; background-repeat: no-repeat; }
 .silk-add { background-image: url(icons/add.png) !important; background-repeat: no-repeat; }
 .silk-delete { background-image: url(icons/delete.png) !important; background-repeat: no-repeat; }
 .silk-cancel { background-image: url(icons/cancel.png) !important; background-repeat: no-repeat; }
+
