@@ -15,9 +15,9 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 					,{ name : 'value'}
 					,{ name : 'extended_service'}					
 					,{ name : 'price_type'}
-					,{ name : 'on_date'}
+					,{ name : 'on_date'}//, type: 'date', dateFormat: 'd/m/Y'}
 				]
-			)
+			)			
 			,writer: new Ext.data.JsonWriter({
 				encode: false
 				,writeAllFields: true
@@ -26,10 +26,14 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 				url: get_api_url('price')
 			})
 			,restful: true
+			,autoSave: false
 		});
 		
-		this.editor = new Ext.ux.grid.RowEditor({
-        	saveText: 'Save'
+		this.editor = new Ext.ux.grid.RowEditor({        	
+        	saveText  : "Сохранить"
+  			,cancelText: "Отменить"
+  			,clicksToEdit: 1
+  			,errorSummary: false 
     	});    	    	
     	
     	this.priceModel = Ext.data.Record.create([{
@@ -41,7 +45,7 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 	    }, {
 	        name: 'on_date',
 	        type: 'date',
-	        dateFormat: 'n/j/Y'
+	        dateFormat: 'j/n/Y'
 	    },{
 	        name: 'price_type',
 	        type: 'string'
@@ -51,8 +55,8 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 		config = {
 			plugins: [this.editor]
 			,padding: "0px 0px 0px 2px"
-			,loadMask : {
-				msg : 'Подождите, идет загрузка...'
+			,viewConfig: {
+        		forceFit: true
 			}
 			,store: this.PriceGridStore
 			,sm : new Ext.grid.RowSelectionModel({
@@ -67,29 +71,32 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 			,columns:[
 			{
 		    	header: "Дата"
-		    	,width: 70
+		    	,width: 110
 		    	,sortable: true 
 		    	,sizeble: true
 		    	,dataIndex: 'on_date'
-		    	,renderer : Ext.util.Format.dateRenderer('m/d/Y')
+		    	,renderer : Ext.util.Format.dateRenderer('d/m/Y')
 		    	,editor : {
 		    		xtype: 'datefield'
-		    		,maxValue: (new Date()).format('m/d/Y')
+		    		,allowBlank: false
+                	,format: 'd/m/Y'
+		    		,maxValue: (new Date()).format('d/m/Y')
 		    	}
 		    },{
 		    	header: "Цена"
-		    	,width: 50
+		    	//,width: 60
 				//,allowBlank: false
 		    	,sortable: true
 		    	,dataIndex: 'value'
 		    	,editor: {
 		    		xtype: 'textfield'
+		    		,allowBlank: false
 		    	}
 		    },{
 		    	header: "Тип цены"
 		    	,sortable: true
 		    	,dataIndex: 'price_type'		    	
-		    	,width: 70		    	
+		    	,width: 80		    	
  				,editor : new Ext.form.ComboBox({ 					 					
 					allowBlank : false,
 					displayField : 'name'
@@ -119,10 +126,10 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
             	,disabled: true
             	,handler: function() {					
 					var priceRec = new this.priceModel ({
-						value : ""
+						value : "1000"
 						,extended_service : "/api/v1/dashboard/extendedservice/" + this.store.baseParams.extended_service					
 						,price_type : "r"
-						,on_date: (new Date()).format('m/d/Y')
+						,on_date: (new Date()).format('d/m/Y')
 					})
 					this.editor.stopEditing();
 					this.store.insert(0, priceRec);
@@ -149,8 +156,9 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 			           			s = this.getSelectionModel().getSelected();           			
 			                	this.store.remove(s);           			
 			           		}
-			           		//this.ExtendedServiceGrid.store.save();
-			           		this.store.on('remove', function() {
+			           		this.store.save();
+			           		this.store.on('save', function() {
+			           			//this.getView().refresh();
 								this.load();
 							}); 
 			           	}
@@ -166,6 +174,21 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 		
 		this.getSelectionModel().on('rowselect',this.onGridSelect,this);
 		this.store.on('load',this.onStoreLoad,this);
+		this.editor.on({
+  			scope: this,
+  			afteredit: function(roweditor, changes, record, rowIndex) {
+				this.PriceGridStore.save();				
+  			}
+  			,canceledit: function() {
+				this.editor.stopEditing();
+				s = this.getSelectionModel().getSelected();
+				if (s.phantom) {
+					this.store.remove(s);
+	                this.getView().refresh();
+	                this.getSelectionModel().selectRow(0);
+				}
+  			}
+		});
 	}
 	
 	,onGridSelect: function() {

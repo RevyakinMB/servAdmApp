@@ -26,10 +26,11 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			,fieldLabel: 'Организация'	
 			,name: 'state'			
 			,allowBlank: false
-			,emptyText: 'required' 	
+			,emptyText: 'Выберите организацию' 	
 			,loadingText: 'Загрузка...'
 			,triggerAction: 'all'     
-			,typeAhead: true			
+			,typeAhead: true	
+			,anchor: '-10'
 		});
 		
 		this.ComboTubeStore = new Ext.data.Store({
@@ -54,32 +55,26 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			,valueField: 'resource_uri'
 			,fieldLabel: 'Тара'			
 			,name: 'tube'			
-			//,allowBlank: true			
-			
 			,loadingText: 'Загрузка...'
 			,triggerAction: 'all'     
-			,typeAhead: true		
+			,typeAhead: true	
+			,anchor: '-10'
 		});
 		
-		config = {
-			//bodyStyle:'padding:0px 0px 0px 5px'
+		config = {			
 			items: [{
 			 	xtype: 'fieldset'			 	
 				,title: 'Расширенная услуга'
-				,autoHeight: true
 				,defaultType: 'textfield'
-				,labelWidth: 135
-				,defaults: {
-					anchor: '-10'
-					,frame: true
-					,width: 150
-				}			
+				,anchor: '-5'
+				,labelWidth: 85
 				,items: [this.OrganizationCombo
 					,this.TubeCombo
 				,{
 					fieldLabel: 'Количество тары'
 					,name: 'tube_count'
 					,allowBlank: true
+					,width: 50
 				},{	
 					xtype: 'checkbox',
 					checked: true,

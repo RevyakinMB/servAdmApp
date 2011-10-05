@@ -6,19 +6,19 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 		this.BaseServiceForm = new App.service.BaseServiceForm ({});		
 		
 		this.ExtendedServiceGrid = new App.service.ExtendedServiceGrid ({
-			width: 170
-			,height: 175
+			width: 190
+			,height: 170
 			,layout: 'hbox'
 		});
 		
 		this.PriceGrid = new App.service.ExtenServPriceGrid ({
-			width: 195
-			,height: 175
+			width: 245
+			,height: 170
 		});	
 		this.ExtendedServForm = new App.service.ExtenServiceForm({
-			width: 380
-			,height: 175
-			,frame: true
+			width: 300
+			,height: 170
+			,bodyStyle: 'background-color:#dfe8f5;'
 		});
 		
 		var config = {
@@ -27,15 +27,15 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 				title: 'Общая информация'
 				,id: 'commonTab'
 			 	,layout: 'anchor'
-			 	,frame: true
+			 	,bodyStyle: 'background-color:#dfe8f5;'			 	
 			 	,items: [
 			 		this.BaseServiceForm
 			 	]			 		
 		   	},{
-		    	title: 'Исполнители'
+		    	title: 'Расширенные услуги'
 		    	,id: 'extendedTab'
 		    	,layout: 'hbox'
-				,frame: true
+		    	,bodyStyle: 'background-color:#dfe8f5;'
 				,layoutConfig: {
 					pack: 'start'
 				}
@@ -47,26 +47,14 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 						,style: { padding: '0px 0px 0px 3px' }
 						,items: [
 							this.ExtendedServForm
-						/*,{
-							xtype:'button'
-							,name: 'saveButton'							
-							,text:'Сохранить изменения'
-							,id: 'extendedFormsaveBtn'
-							,disabled: true
-							,handler:function(but){				 
-								if ( this.getForm().isValid() ) { 
-						   			this.fireEvent('formsave',this.record);
-								}
-							}
-							,scope:this.ExtendedServForm			
-						}*/]					
+						]					
 					}
 				]			    
 		  	},{
-		    	title: 'Операции'
-		    	,frame: true
+		    	title: 'Операции'		    	
+		    	,bodyStyle: 'background-color:#dfe8f5;'
 	      }]
-	      ,bbar: [{
+	      ,bbar: ['->',{
 	      	xtype: 'button'
 	      	,iconCls:'silk-accept'
 	      	,ref: '../saveButton'
@@ -85,10 +73,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 			
 		this.ExtendedServiceGrid.getSelectionModel().on('rowselect',this.onExtendedServiceGridSelect,this);
 		this.ExtendedServiceGrid.on('newrecordclick',this.onNewRecordClick,this);
-		this.ExtendedServiceGrid.on('deleterecordclick',this.onDeleteRecordClick,this);
-		
-		/*this.ExtendedServForm.on('formsave',this.onFormSave,this);*/
-		
+		this.ExtendedServiceGrid.on('deleterecordclick',this.onDeleteRecordClick,this);				
 		this.ExtendedServiceGrid.store.on('load', this.onExtendedServiceLoad, this);
 		
 	}
@@ -102,11 +87,8 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 		if (sm.getCount() == 0 ) { 
 			this.PriceGrid.disable();
 			this.ExtendedServForm.disable();
-			/*this.ExtendedServForm.getForm().findField('base_service').setValue(
-					this.ExtendedServiceGrid.getSelectionModel().getSelected().get('base_service'));*/
 			this.ExtendedServiceGrid.removeButton.setDisabled(true);
 			//this.ExtendedServForm.getForm().findField('saveButton').setDisabled(true); // WHY?! this "is null"???
-			//Ext.getCmp("extendedFormsaveBtn").setDisabled(true);
 		}		
 	}	
 	
@@ -133,25 +115,36 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 	}
 	
 	
-	,onNewRecordClick: function() {
-		/*this.ExtendedServForm.record = null;
-		this.ExtendedServForm.clearFields();
-		this.ExtendedServiceGrid.getSelectionModel().clearSelections();*/
-		if (!this.newServiceForm) {
-			this.newServiceForm =  new App.service.ExtenServiceForm({
-				width: 380
-				,height: 195
-				,frame: true
-				,bbar: [{
+	,onNewRecordClick: function() {			
+		this.newServiceForm = new App.service.ExtenServiceForm({
+			width: 385
+			,height: 170
+			,bodyStyle: 'background-color:#dfe8f5;'							
+		});
+		var a = this.ExtendedServiceGrid.store.baseParams.base_service;
+		this.newServiceForm.getForm().findField('base_service').setValue("/api/v1/dashboard/extendedservice/" + a);		
+
+		this.newServiceWindow = new Ext.Window ({
+			width: 400
+			,height : 235
+			,title: 'Новая расширенная услуга'
+			,items: [this.newServiceForm
+			,new Ext.Container({
+				layout: 'hbox'
+				,style: {
+		            padding: '5px'
+		        }
+				,layoutConfig:	{pack: 'end' }
+				,items: [{
 					xtype: 'button'
 					,text: 'Создать'
 					,iconCls:'silk-add'
 					,handler: function() {
-						if ( this.newServiceForm.getForm().isValid() ) {
-							this.newServiceWindow.hide();
+						if ( this.newServiceForm.getForm().isValid() ) {							
 							var p = new this.ExtendedServiceGrid.store.recordType();
 							this.newServiceForm.getForm().updateRecord(p);
 							this.ExtendedServiceGrid.store.insert(0,p);
+							this.newServiceWindow.close();
 							this.ExtendedServiceGrid.store.save();
 							this.ExtendedServiceGrid.store.on('save', function() {
 								this.ExtendedServiceGrid.store.load();
@@ -164,42 +157,15 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 					,text: 'Отмена'
 					,iconCls:'silk-cancel'
 					,handler: function() {
-						this.newServiceWindow.hide();
+						this.newServiceWindow.close();
 					}
 					,scope: this
-				}]									
-			});
-		};
-		var a = this.ExtendedServiceGrid.store.baseParams.base_service;
-		this.newServiceForm.getForm().findField('base_service').setValue("/api/v1/dashboard/extendedservice/" + a);
-		/*var a = this.ExtendedServiceGrid.getSelectionModel().getSelected().get('base_service');
-		*/			
-		
-		if (!this.newServiceWindow) {
-			this.newServiceWindow = new Ext.Window ({
-				width: 396
-				,height : 222
-				,title: 'Новая расширенная услуга'
-				,items: [this.newServiceForm]
-				,modal: true
-			});						
-		}
+				}]
+			})]
+			,modal: true
+		});								
 		this.newServiceWindow.show();		
 	}
-	/*,onFormSave: function(rec) {
-		if (rec) {
-			this.ExtendedServForm.getForm().updateRecord(rec);
-			this.ExtendedServiceGrid.store.save();
-		} else {
- 			var p = new this.ExtendedServiceGrid.store.recordType();
- 			this.ExtendedServForm.getForm().updateRecord(p);
-			this.ExtendedServiceGrid.store.insert(0,p);
-			this.ExtendedServiceGrid.store.save();
-			this.ExtendedServiceGrid.store.on('save', function() {
-				this.ExtendedServiceGrid.store.load();
-			},this);
-		}				
-	}*/	
 	
 	,onExtendedServiceGridSelect: function(selModel, rowIndex, rec) {
 		this.ExtendedServiceGrid.removeButton.setDisabled(false);

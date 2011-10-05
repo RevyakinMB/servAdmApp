@@ -8,7 +8,7 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 		this.TreePanel = new App.ServicePanel.Tree({
 			layout: 'fit'
 			,region:'west'
-			,width:220 
+			,width:250 
 			,collapsible:true
 			,collapseMode:'mini'
 			,split:true
@@ -16,12 +16,12 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 				
 		this.ServiceGrid = new App.service.ServGrid ({
 			id:'grid'
-			,anchor: '100% 45%'
+			,anchor: '100% 51%'
 			,frame: true			
 		});
 		
 		this.InfoTabPanel = new App.service.InfoTabPanel ({
-			anchor: '100% 55%'			
+			anchor: '100% 49%'			
 		});
 		
 		this.TreePanelManageStore = this.TreePanelManageStore || new Ext.data.RESTStore({
@@ -45,7 +45,6 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 		
 		var config = {
 			id: 'ServiceAdminPanel_id'
-			,frame: true
 			,title: 'Управление услугами'
 			,layout: 'border'	
      		,items: [
@@ -78,7 +77,7 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 		
 		this.TreePanel.on('nodeClick',this.onNodeClick,this);
 		this.TreePanel.on('servicegroupadd',this.onServiceGroupAddClick,this);
-		this.ServiceGrid.getSelectionModel().on('rowselect',this.onBaseServiceGridSelect,this);
+		this.ServiceGrid.getSelectionModel().on('selectionchange',this.onBaseServiceGridSelect,this);
 		this.ServiceGrid.on('newrecordclick', this.onNewServiceClick, this);
 		this.ServiceGrid.store.on('load', function() {				
 				this.ServiceGrid.getSelectionModel().selectFirstRow();
@@ -94,7 +93,7 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 	}
 	
 	,onFormSave: function () {
-		if (this.InfoTabPanel.getActiveTab().title == 'Исполнители') {
+		if (this.InfoTabPanel.getActiveTab().title == 'Расширенные услуги') {
 			if ( this.InfoTabPanel.ExtendedServForm.record && 
 			  this.InfoTabPanel.ExtendedServForm.getForm().isValid() ) { 
 			   	this.InfoTabPanel.ExtendedServForm.getForm().updateRecord(this.InfoTabPanel.ExtendedServForm.record);
@@ -110,48 +109,49 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 	}
 	
 	,onServiceGroupAddClick : function () {
-		if (!this.ServiceWindow) {
-			this.ServiceWindow = new App.service.ServiceWindow ();
-		}
-		this.ServiceWindow.ParentChoicePanel.enable();
-		//this.ServiceGrid.el.mask()
+		this.TreePanel.addButton.setDisabled(true);
+		this.ServiceWindow = new App.service.ServiceWindow ();
+		this.ServiceWindow.AdditionalFormPanel.setVisible(false);
+		if (this.TreePanel.activeNode) {
+			this.ServiceWindow.ParentChoiceFormPanel.getForm().
+					findField('name').setValue(this.TreePanel.activeNode.text);
+			this.ServiceWindow.ParentChoiceFormPanel.getForm().
+					findField('parent_group').setValue("/api/v1/dashboard/baseservice/" + this.TreePanel.activeNode.id);
+		}							
 		Ext.getCmp("servicecenterpanel").disable();
 		this.ServiceWindow.setTitle('Добавление новой группы услуг');
-		this.ServiceWindow.ParentChoicePanel.setTitle('Выберите родительскую группу');
-		this.ServiceWindow.show();		
-		
-		this.ServiceWindow.on('hide', function() {
+		this.ServiceWindow.show();
+		this.ServiceWindow.on('beforeclose', function() {
 			Ext.getCmp("servicecenterpanel").enable();
+			this.TreePanel.addButton.setDisabled(false);
 			if (this.ServiceWindow.action == "add") {
 				
 				var p = new this.ServiceGrid.store.recordType();
 				this.ServiceWindow.MainFormPanel.getForm().updateRecord(p);
-				this.ServiceWindow.AdditionalFormPanel.getForm().updateRecord(p);
-				if (!this.ServiceWindow.ParentChoiceForm.getForm().findField('is_root').getValue()) {								
-					p.set('parent', this.ServiceWindow.ParentChoiceForm.getForm().
+				
+				if (!this.ServiceWindow.ParentChoiceFormPanel.getForm().findField('is_root').getValue()) {								
+					p.set('parent', this.ServiceWindow.ParentChoiceFormPanel.getForm().
 							findField('parent_group').getValue() );
 				}
 				p.set('is_group', true); 
-				
 				this.TreePanelManageStore.insert(0,p);							
 				this.TreePanelManageStore.save();
-				//this.TreePanelManageStore.on('save', function() {},this);				
 			}
 		},this);
 		
 	}
 	
 	,onNewServiceClick: function() {
-		if (!this.ServiceWindow) {
-			this.ServiceWindow = new App.service.ServiceWindow ();
-		}
+		this.ServiceWindow = new App.service.ServiceWindow ();
+		this.ServiceWindow.ParentChoiceFormPanel.setVisible(false);
 		this.disable();
-		this.ServiceWindow.ParentChoicePanel.disable();
-		this.ServiceWindow.setTitle('Добавление новой услуги');
-		this.ServiceWindow.ParentChoicePanel.setTitle(' ');
+		this.TreePanel.addButton.setDisabled(true);
+		 		
+		this.ServiceWindow.setTitle('Добавление новой услуги');		
 		this.ServiceWindow.show();
-		this.ServiceWindow.on('hide', function() {
+		this.ServiceWindow.on('beforeclose', function() {
 			this.enable();
+			this.TreePanel.addButton.setDisabled(false);
 			if (this.ServiceWindow.action == "add") {
 				var a = this.ServiceGrid.store.baseParams.parent;
 				this.ServiceWindow.MainFormPanel.
@@ -161,24 +161,24 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 				this.ServiceWindow.MainFormPanel.getForm().updateRecord(p);
 				this.ServiceWindow.AdditionalFormPanel.getForm().updateRecord(p);
 				this.ServiceGrid.store.insert(0,p);
-				//this.ServiceGrid.store.save();
+				this.ServiceGrid.store.save();
 				this.ServiceGrid.store.on('save', function() {
-					this.ServiceGrid.store.load();
-				},this);
+					this.load();
+				});				
 			}
 		},this);
 	}
 	
-	,onBaseServiceGridSelect: function(selModel, rowIndex, rec) {
-		// ДОБАВИТЬ МНОЖЕСТВЕНОЕ ВЫДЕЛЕНИЕ!
+	,onBaseServiceGridSelect: function(selModel) {     //selModel, rowIndex, rec) {		
 		if (selModel.getCount() == 1) {	
 			Ext.getCmp("extendedTab").enable();
 			Ext.getCmp("commonTab").enable();
+			this.InfoTabPanel.setActiveTab(1);
 			
 			this.InfoTabPanel.saveButton.setDisabled(false);
 			this.ServiceGrid.removeButton.setDisabled(false);
-			this.InfoTabPanel.BaseServiceForm.setActiveRecord(rec);
-			var data = rec.json.resource_uri;		
+			this.InfoTabPanel.BaseServiceForm.setActiveRecord(selModel.getSelected());
+			var data = selModel.getSelected().json.resource_uri;		
 			this.InfoTabPanel.ExtendedServForm.CombOrganizationStore.load();		
 	    	this.InfoTabPanel.ExtendedServiceGrid.store.setBaseParam('base_service', App.uriToId(data));
 	    	this.InfoTabPanel.ExtendedServiceGrid.store.load();
@@ -195,8 +195,8 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 	
 	,onNodeClick : function(node,e) {
 		if (this.ServiceWindow && this.ServiceWindow.isVisible() ) {
-			this.ServiceWindow.ParentChoiceForm.getForm().findField('parent_group').setValue("/api/v1/dashboard/baseservice/" + node.id);
-			this.ServiceWindow.ParentChoiceForm.getForm().findField('name').setValue(node.text);
+			this.ServiceWindow.ParentChoiceFormPanel.getForm().findField('parent_group').setValue("/api/v1/dashboard/baseservice/" + node.id);
+			this.ServiceWindow.ParentChoiceFormPanel.getForm().findField('name').setValue(node.text);
 		} else {
 			this.ServiceGrid.removeButton.setDisabled(true);
 			this.ServiceGrid.store.setBaseParam('parent', node.id);

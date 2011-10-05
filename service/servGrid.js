@@ -50,7 +50,7 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 	//this.store = this.store || new App.service.ServiceGridStore({});
 		
 	this.store = this.store || new Ext.data.RESTStore({
-		autoSave: true
+		autoSave: false
 		,autoLoad: false
 		,apiUrl: get_api_url('baseservice')
 		,model: [
@@ -78,39 +78,33 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 		    	dataIndex: 'code' 		    	
 			},{
 		    	header: "Наименование", 
-		    	width: 300, 
+		    	width: 450, 
 		    	sortable: true, 
 		    	dataIndex: 'name'
 		    },{
 		    	header: "Время выполнения", 
 		    	width: 100, 
 		    	dataIndex: 'execution_time' 
-		    },{
-		    	header: "Версия", 
-		    	width: 50, 
-		    	dataIndex: 'version' 
 		    },{   
 		     	header: "Материал", 
 		    	width: 80, 		 
 		    	dataIndex: 'material_name'		    			    	
+		    },{
+		    	header: "Версия" 
+		    	,width: 45
+		    	,dataIndex: 'version'
+		    	,align: 'right'
 		    }/*,{
 		    	header: "Краткое наименование", 
 		    	width: 80, 
 		    	sortable: true,
 		    	hidden: true,
 		    	dataIndex: 'short_name'
-		    },{
-		    	header: "Общий референсный интервал", 
-		    	width: 95, 
-		    	sortable: true, 
-		    	hidden: true,
-		    	dataIndex: 'gen_ref_interval' 
-		    }*/
+		    } */
 		];
 
 		var config = {			
 			id: 'serviceAdm-grid'
-			,forceFit:true
 			,loadMask : {
 				msg : 'Подождите, идет загрузка...'
 			}			
@@ -158,10 +152,10 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 			           			s = this.getSelectionModel().getSelected();           			
 			                	this.store.remove(s);           			
 			           		}
-			           		//this.store.save();
+			           		this.store.save();
 			           		this.store.on('save', function() {
-								this.store.load();
-							},this); 
+								this.load();
+							}); 
 			           	}
 			           	,scope: this
 			         	,icon: Ext.MessageBox.QUESTION

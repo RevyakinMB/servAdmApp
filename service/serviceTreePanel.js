@@ -21,6 +21,7 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 	        }
 	        ,listeners:{
 	        	click:function(node,e){
+	        		this.activeNode = node;
 	        		this.fireEvent('nodeClick',node,e);
 	        	}
 	        }
@@ -32,7 +33,7 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 	        }
 	    	,tbar: [new Ext.form.TextField({
 	    		id:'service-tree-filter'
-	    	    ,width: 175
+	    	    ,width: 195
 				,emptyText:'Поиск по названию'
         		,enableKeyEvents: true
 				,listeners:{
@@ -53,6 +54,7 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 	    	,'->'
 	    	,{
 		    	iconCls:'silk-add'
+		    	,ref:'../addButton'
 		    	,handler:function(){
 		    		this.fireEvent('servicegroupadd');
 			   	}
@@ -76,9 +78,9 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.ServicePanel.Tree.superclass.initComponent.apply(this, arguments);
 		
-		this.getSelectionModel().on('beforeselect', function(sm, node){
+		/*this.getSelectionModel().on('beforeselect', function(sm, node){
 	  		return node.isLeaf();
-	  	});
+	  	});*/
 	}
 	
 	,filterTree: function(t, e){

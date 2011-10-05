@@ -3,33 +3,33 @@ Ext.ns('App.service');
 App.service.ServiceWindow = Ext.extend(Ext.Window, {
 	initComponent : function() {
 		
-		this.MaterialCombo = new App.service.MaterialCombo({});
+		this.MaterialCombo = new App.service.MaterialCombo({
+		//width: 120
+			anchor: '-5'
+			,boxMaxWidth : 120
+		});
 		
 		this.MainFormPanel = new Ext.form.FormPanel({ 
-			title: 'Основное'
-			,bodyStyle: 'padding: 5px'
-			//,autoHeight: true
+			//title: 'Основное'
+			bodyStyle: 'padding: 5px'			
 			,defaultType: 'textfield'
 			,labelWidth: 85
-			,frame: true
-			,defaults: {
-				anchor: '-10'				
-				//,width: 150
-			}				
+			,bodyStyle: {
+    			background: 'transparent'
+    			,padding: '5px'
+			}
+			,defaults: {anchor: '-10'}
 			,items:	[
 			{
 				fieldLabel: 'Наименование'
 				,name: 'name'
 				,allowBlank: false
-				,emptyText: 'required'
+				,emptyText: 'Введите наименование услуги'
 			},{				
 				fieldLabel: 'Кратко'
 				,allowBlank: false
 				,name: 'short_name'
-				,emptyText: 'required'
-			},{
-				fieldLabel: 'Код'
-				,name: 'code'
+				,emptyText: 'Введите краткое наименование'
 			},{
 				xtype: 'hidden'
 				,name: 'parent'
@@ -37,35 +37,57 @@ App.service.ServiceWindow = Ext.extend(Ext.Window, {
 		});
 		
 		this.AdditionalFormPanel = new Ext.form.FormPanel({					
-			title: 'Дополнительно'
-			,bodyStyle: 'padding: 5px'
+			bodyStyle: 'padding: 5px'
 			,defaultType: 'textfield'
 			,labelWidth: 85
-			,frame: true
-			,defaults: {
-				anchor: '-10'				
-				//,width: 100
-			}					
+			,bodyStyle: {
+    			background: 'transparent'
+    			,padding: '5px'
+			}			
 			,items:	[
 			{
-				fieldLabel: 'Версия'
-				,name: 'version'
-				,labelWidth: 50
-			}
-				,this.MaterialCombo
-			,{
-				fieldLabel: 'Станд. время выполнения'
-				,name: 'execution_time'
+				xtype: 'container'
+				,border: false
+				,anchor: '-10'						
+				,layout: 'column'
+				,items: [ 
+				{
+					xtype: 'container'
+					//,width: 230
+					,columnWidth: .5
+					,layout: 'form'
+					,items:[this.MaterialCombo]							
+				},{
+					xtype: 'container'
+					//,width: 180
+					,columnWidth: .5
+					,layout: 'form'
+					,items:[
+					{
+						xtype: 'textfield'
+						,fieldLabel: 'Станд. время выполнения'
+						,name: 'execution_time'
+						,anchor: '0'
+					}]							
+				}]											
 			},{
-				fieldLabel: 'Общий рефер. интервал'
+				fieldLabel: 'Код'
+				,name: 'code'
+				,width: 120
+			},{
+				xtype: 'textarea'
+				,anchor: '-10'
+				,fieldLabel: 'Общий рефер. интервал'
 				,name: 'gen_ref_interval'
 			}]
 		});
 				
-		this.ParentChoiceForm = new Ext.form.FormPanel({ 			
-			bodyStyle: 'padding: 5px'
-			,labelWidth: 85
-			,frame: true
+		this.ParentChoiceFormPanel = new Ext.form.FormPanel({ 			
+			labelWidth: 85
+			,bodyStyle: {
+    			background: 'transparent'
+    			,padding: '5px'
+			}
 			,defaults: {anchor: '-10'}				
 			,items:	[{    	            
 				xtype: 'checkbox'
@@ -74,7 +96,7 @@ App.service.ServiceWindow = Ext.extend(Ext.Window, {
 				,labelSeparator: ''
 				,checked: false
 				,handler: function(el, checked) {
-					var textF = this.ParentChoiceForm.getForm().findField('name'); 
+					var textF = this.ParentChoiceFormPanel.getForm().findField('name'); 
 					if (checked) {
 						textF.disable()
 					} else {
@@ -90,53 +112,53 @@ App.service.ServiceWindow = Ext.extend(Ext.Window, {
 				xtype: 'hidden'
 				,name: 'parent_group'				
 			}]
-		});
-		
-		this.ParentChoicePanel = new Ext.Panel ({			
-			title: 'Выберите родительскую группу'
-			,frame: true
-			,items: [this.ParentChoiceForm]			
-		});		
+		});					
 		
 		config = {
 
-			closable: false
+			closable: true
 			,title: 'Добавление новой услуги' 
-			,height: 280
-			,width: 270
+			,height: 270
+			,width: 470
 			,border: true //check
-			,layout: 'accordion'
-			//,modal: true			
+			,layout: 'form'	
 			,layoutConfig : {
 				animate : true
 			}
 			,items : [
 				this.MainFormPanel
 				,this.AdditionalFormPanel
-				,this.ParentChoicePanel
+				,this.ParentChoiceFormPanel
+				,new Ext.Container({
+					layout: 'hbox'
+					,style: {
+			            padding: '5px'
+			        }
+					,layoutConfig:	{pack: 'end' }
+					,items: [{
+						xtype: 'button'	
+						,text: 'Сохранить'
+						,iconCls:'silk-add'
+						,handler: function() {
+							if (this.MainFormPanel.getForm().isValid() &&
+							  this.AdditionalFormPanel.getForm().isValid() ) {
+								this.action = 'add';
+								this.close();
+							}
+						}				
+						,scope: this
+					},{
+						xtype: 'button'	
+						,text: 'Отмена'
+						,iconCls:'silk-cancel'
+						,handler: function() {
+							this.action = 'cancel';
+							this.close();
+						}				
+						,scope: this
+					}]
+				})
 			]
-			,tbar: [{
-				xtype: 'button'	
-				,text: 'Сохранить'
-				,iconCls:'silk-add'
-				,handler: function() {
-					if (this.MainFormPanel.getForm().isValid() &&
-					  this.AdditionalFormPanel.getForm().isValid() ) {
-						this.action = 'add';
-						this.hide();
-					}
-				}				
-				,scope: this
-			},'-',{
-				xtype: 'button'	
-				,text: 'Отмена'
-				,iconCls:'silk-cancel'
-				,handler: function() {
-					this.action = 'cancel';
-					this.hide();
-				}				
-				,scope: this
-			}]
 		}		
 		
 		Ext.apply(this, Ext.apply(this.initialConfig, config));

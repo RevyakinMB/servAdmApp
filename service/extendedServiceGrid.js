@@ -31,10 +31,11 @@ App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 			,restful: true
 			,autoSave: false
 		});	
-		config = {			
-			
-			loadMask : {	msg : 'Подождите, идет загрузка...' }			
-			,store: this.ExtendedGridStore
+		config = {											
+			store: this.ExtendedGridStore
+			,viewConfig: {
+        		forceFit: true
+			}
 			,sm : new Ext.grid.RowSelectionModel({
 				singleSelect : true
 			})
@@ -47,13 +48,13 @@ App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 			,columns:[
 			{
 		    	header: "Организация"
-		    	,width: 100
+		    	,width: 150
 		    	,sortable: true 
 		    	,sizeble: true
 		    	,dataIndex: 'state_name'
 		    },{
 		    	header: "Активно"
-		    	,width: 50
+		    	,width: 60
 		    	,sortable: true
 		    	,dataIndex: 'is_active' 
 		    	,renderer: function(val) {
