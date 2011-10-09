@@ -29,6 +29,32 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 			,autoSave: false
 		});
 		
+		/*Ext.util.Format.CurrencyFactory = function(c, d, t, s) {
+			return function(n) {
+				var m = (c = Math.abs(c) + 1 ? c : 2, d = d || ",", t = t || ".",/(\d+)(?:(\.\d+)|)/.exec(n + "")), x = m[1].length > 3 ? m[1].length % 3 : 0;
+				return ((x ? m[1].substr(0, x) + t : "") + m[1].substr(x).replace(/(d{3})(?=d)/g,"$1" + t) + (c ? d + (+m[2] || 0).toFixed(c).substr(2) : ""))+" "+s;
+			}
+		}*/
+		
+		Ext.util.Format.CurrencyFactory = function(dp, dSeparator, tSeparator, symbol) {
+		    return function(n) {
+		        dp = Math.abs(dp) + 1 ? dp : 2;
+		        dSeparator = dSeparator || ".";
+		        tSeparator = tSeparator || ",";
+		
+		        var m = /(\d+)(?:(\.\d+)|)/.exec(n + ""),
+		            x = m[1].length > 3 ? m[1].length % 3 : 0;
+		
+		        return (n < 0? '-' : '') // preserve minus sign
+		                + (x ? m[1].substr(0, x) + tSeparator : "")
+		                + m[1].substr(x).replace(/(\d{3})(?=\d)/g, "$1" + tSeparator)
+		                + (dp? dSeparator + (+m[2] || 0).toFixed(dp).substr(2) : "")
+		                + " " + symbol;
+		    };
+		};
+
+		//var euroFormatter = Ext.util.Format.CurrencyFactory(2, ",", ".", "€")
+		
 		this.editor = new Ext.ux.grid.RowEditor({        	
         	saveText  : "Сохранить"
   			,cancelText: "Отменить"
@@ -88,6 +114,7 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 				//,allowBlank: false
 		    	,sortable: true
 		    	,dataIndex: 'value'
+		    	,renderer : Ext.util.Format.CurrencyFactory(2, ",", ".", "")
 		    	,editor: {
 		    		xtype: 'textfield'
 		    		,allowBlank: false

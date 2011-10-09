@@ -6,15 +6,15 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 		this.BaseServiceForm = new App.service.BaseServiceForm ({});		
 		
 		this.ExtendedServiceGrid = new App.service.ExtendedServiceGrid ({
-			width: 190
-			,height: 170
-			,layout: 'hbox'
+			height: 170
+			,border: false			
 		});
 		
 		this.PriceGrid = new App.service.ExtenServPriceGrid ({
-			width: 245
-			,height: 170
+			height: 170
+			,border: false
 		});	
+		
 		this.ExtendedServForm = new App.service.ExtenServiceForm({
 			width: 300
 			,height: 170
@@ -34,16 +34,22 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 		   	},{
 		    	title: 'Расширенные услуги'
 		    	,id: 'extendedTab'
-		    	,layout: 'hbox'
+		    	,layout: 'column'
 		    	,bodyStyle: 'background-color:#dfe8f5;'
-				,layoutConfig: {
-					pack: 'start'
-				}
 				,items: [
-					this.ExtendedServiceGrid
-					,this.PriceGrid
-					,{
+					{
 						xtype: 'container'
+						,columnWidth: .5 
+						,style: { padding: '0px 0px 0px 3px' }
+						,items: [this.ExtendedServiceGrid]
+					},{
+						xtype: 'container'
+						,columnWidth: .5
+						,style: { padding: '0px 0px 0px 3px' }
+						,items: [this.PriceGrid]
+					},{
+						xtype: 'container'
+						,width: 300
 						,style: { padding: '0px 0px 0px 3px' }
 						,items: [
 							this.ExtendedServForm
@@ -53,8 +59,20 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 		  	},{
 		    	title: 'Операции'		    	
 		    	,bodyStyle: 'background-color:#dfe8f5;'
+		    	,id: 'operationTab'
 	      }]
 	      ,bbar: ['->',{
+	      	xtype: 'button'
+	      	,iconCls:'silk-cancel'
+	      	,ref: '../cancelButton'
+	      	,text: 'Отменить изменения'
+	      	,width: 150
+	      	,disabled: true
+	      	,handler: function() {
+	      		this.fireEvent('cancelformchanges');	
+	      	}
+	      	,scope: this
+	      },{
 	      	xtype: 'button'
 	      	,iconCls:'silk-accept'
 	      	,ref: '../saveButton'
@@ -75,7 +93,42 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 		this.ExtendedServiceGrid.on('newrecordclick',this.onNewRecordClick,this);
 		this.ExtendedServiceGrid.on('deleterecordclick',this.onDeleteRecordClick,this);				
 		this.ExtendedServiceGrid.store.on('load', this.onExtendedServiceLoad, this);
+		this.ExtendedServForm.on('staffmanageclick', this.onStaffManageBtnClick,this);		
 		
+	}
+	
+	,onStaffManageBtnClick: function() {
+		if (this.ExtendedServiceGrid.getSelectionModel().getSelected()) {
+			this.staffWindow = new App.service.StaffWindow();
+			this.staffWindow.sourceStore.load();			
+			var staffArray = this.ExtendedServiceGrid.getSelectionModel().getSelected().get('staff');
+			if (staffArray) {
+				this.staffWindow.resultStore.loadData( this.ExtendedServiceGrid.getSelectionModel().getSelected().get('staff') );
+			}			
+			this.staffWindow.sourceStore.on('load',function () {
+				
+				var records = this.staffWindow.resultStore.getRange();
+		        for (var i = 0; i < records.length; i++) {	        	
+		        	var rec_number = this.staffWindow.sourceStore.find("name",records[i].data.name.split(',',1));  				
+		            this.staffWindow.sourceStore.remove(this.staffWindow.sourceStore.getAt(rec_number) );	            
+		        } 	        
+		        this.staffWindow.show()
+			},this);
+			this.staffWindow.on('beforeclose',function() {
+				if (this.staffWindow.action == 'save') {
+					var datArray = new Array();
+			        var records = this.staffWindow.resultStore.getRange();
+			        for (var i = 0; i < records.length; i++) {
+			        	records[i].data.id = i;
+			        	var ar = Array (records[i].data.id, records[i].data.name );
+			            datArray.push(ar);  // не работает сохранение нового массива врачей
+			        }
+			        var aa = this.ExtendedServiceGrid.getSelectionModel().getSelected();
+			        this.ExtendedServiceGrid.getSelectionModel().getSelected().set('staff', datArray);
+			        this.ExtendedServiceGrid.store.save();
+				}
+			},this);
+		}
 	}
 	
 	,onExtendedServiceLoad: function() {
@@ -117,13 +170,14 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 	
 	,onNewRecordClick: function() {			
 		this.newServiceForm = new App.service.ExtenServiceForm({
-			width: 385
+			//width: 385
+			anchor: '-10'
 			,height: 170
 			,bodyStyle: 'background-color:#dfe8f5;'							
 		});
 		var a = this.ExtendedServiceGrid.store.baseParams.base_service;
 		this.newServiceForm.getForm().findField('base_service').setValue("/api/v1/dashboard/extendedservice/" + a);		
-
+		this.newServiceForm.staffBtn.setVisible(false);
 		this.newServiceWindow = new Ext.Window ({
 			width: 400
 			,height : 235

@@ -18,7 +18,8 @@ App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 					,{name : 'is_active'}									
 					,{name: 'is_manual'}
 					,{name: 'state'}
-					,{name: 'tube_count'}					
+					,{name: 'tube_count'}
+					,{name : 'staff'}
 				]
 			)
 			,writer: new Ext.data.JsonWriter({

@@ -113,8 +113,8 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 			,sm : this.selM
 			,viewConfig: {
         		forceFit: true
-			}
-		 
+        		,emptyText: 'Нет данных для текущей группы услуг'
+			}		 
 			,bbar: new Ext.PagingToolbar({
 	            pageSize: 20,
 	            store: this.store,
@@ -149,7 +149,8 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 			           ,fn: function(btn) { 
 			           		if (btn == "yes") {    
 			           			this.removeButton.setDisabled(true);
-			           			s = this.getSelectionModel().getSelected();           			
+			           			//s = this.getSelectionModel().getSelected();           			
+			           			s = this.getSelectionModel().getSelections();
 			                	this.store.remove(s);           			
 			           		}
 			           		this.store.save();

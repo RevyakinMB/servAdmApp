@@ -31,6 +31,14 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			,triggerAction: 'all'     
 			,typeAhead: true	
 			,anchor: '-10'
+			/*,listeners: {
+				select: function() {
+					if (this.getForm().isValid()) {
+	            		this.getForm().updateRecord(this.record);
+	            	}	
+				}				
+				,scope: this
+			}*/
 		});
 		
 		this.ComboTubeStore = new Ext.data.Store({
@@ -59,23 +67,70 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			,triggerAction: 'all'     
 			,typeAhead: true	
 			,anchor: '-10'
+		});			
+		
+		this.checkNStaffForm = new Ext.form.FormPanel({
+			border: false
+			
+			,bodyStyle: 'background-color:#dfe8f5;'			
+			,defaultType: 'textfield'
+			,layout: 'hbox'
+			,labelWidth : 1
+			,items: [{
+				xtype: 'container'
+				,border: false
+				//,anchor: '-10'						
+				,layout: 'form'
+				,items: [ 
+				{	
+					xtype: 'checkbox',
+					checked: true,
+	    	        labelSeparator: '',
+	        	    boxLabel: 'Активно',
+	            	name: 'is_active'
+	            	,handler: function() {
+	            		if (this.getForm().isValid()) {
+	            			this.getForm().updateRecord(this.record);
+	            		}
+	            	}
+	            	,scope: this
+				},{	
+					xtype: 'checkbox',
+					checked: false,
+	        	    labelSeparator: '',
+	            	boxLabel: 'Ручной метод',
+		            name: 'is_manual'
+				}]	
+			},{
+				xtype: 'button'
+				,text: 'Кем выполняется'
+				,ref: '../../staffBtn'
+				//,iconCls:'silk-???'
+				,handler: function() {
+					this.fireEvent('staffmanageclick');
+				}
+				,scope: this				
+			}]
 		});
 		
-		config = {			
-			items: [{
+		config = {	
+			border: false
+			,items: [{
 			 	xtype: 'fieldset'			 	
 				,title: 'Расширенная услуга'
 				,defaultType: 'textfield'
+				,border: false
 				,anchor: '-5'
-				,labelWidth: 85
+				,labelWidth: 96
 				,items: [this.OrganizationCombo
 					,this.TubeCombo
 				,{
 					fieldLabel: 'Количество тары'
 					,name: 'tube_count'
-					,allowBlank: true
+					,allowBlank: true					
 					,width: 50
-				},{	
+				},this.checkNStaffForm
+				/*,{	
 					xtype: 'checkbox',
 					checked: true,
         	        labelSeparator: '',
@@ -87,46 +142,34 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
             	    labelSeparator: '',
                 	boxLabel: 'Ручной метод',
     	            name: 'is_manual'
-				},{	
+				}*/
+				,{	
 					xtype: 'hidden'
 					,name:'base_service'
 				}]
-			}/*,{
-				xtype:'button'
-				,name: 'saveButton'
-				//,ref: '../saveButton'
-				,text:'Сохранить изменения'
-				,id: 'extendedFormsaveBtn'
-				,disabled: true
-				,handler:function(but){				 
-					//but.setDisabled(true);
-					if ( this.getForm().isValid() ) { 
-			   			this.fireEvent('formsave',this.record);
-					}
-				}
-				,scope:this			
-			}*/]
+			}]
 		}
+		
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.ExtenServiceForm.superclass.initComponent.apply(this, arguments);
 		this.on('afterrender', function(){
 			this.CombOrganizationStore.load();
 		},this);
 	}
-		
-	
+			
 	,setActiveRecord: function(record) {
 		this.record = record;
 		this.getForm().loadRecord(this.record);
+		this.checkNStaffForm.getForm().loadRecord(this.record);
 	}
 	
-	,clearFields: function() {
+	/*,clearFields: function() {
 		this.getForm().findField('tube_count').setValue("");
 		this.getForm().findField('is_active').setValue(true);
 		this.getForm().findField('is_manual').setValue(false);
 		this.getForm().findField('state').reset();
 		this.getForm().findField('tube').reset();		
-	}
+	}*/
 
 }); //end of ExtenServiceForm
 

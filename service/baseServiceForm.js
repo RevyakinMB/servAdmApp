@@ -45,21 +45,22 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 		this.MaterialCombo = new App.service.MaterialCombo({width: 95});
 		
 		config = {		
-			layout: 'hbox'
+			layout: 'column'
 			,bodyStyle: 'background-color:#dfe8f5;'
 			,labelWidth: 85
-			,layoutConfig: { pack: 'start' }
+			,border: false
 			,items: [{
 			////
 				xtype: 'container'
-				,width: 490
-				,style: { padding: '2px' }			
+				,columnWidth: .6
+				//,style: { padding: '2px 2px 2px 21px' }			
 				,defaultType: 'textfield'
 			////
 				,items: [{
-			 		xtype: 'fieldset'			 	
+			 		xtype: 'fieldset'	
+			 		,border: false
 					,title: 'Основное'
-					,autoHeight: true
+					,autoHeight: true				
 					,defaultType: 'textfield'
 					,labelWidth: 85
 					,bodyStyle: 'background-color:#dfe8f5;'			
@@ -77,71 +78,53 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 						,emptyText: 'Введите краткое наименование'
 						,anchor: '-10'						
 					},{
-						fieldLabel: 'Код убрать?'
-						,name: 'code'
-						,width: 70
+						xtype: 'container'						
+						,layout: 'column'
+					    ,defaults: {					       
+					        xtype: 'container'
+					        ,layout: 'form'
+					        ,columnWidth: 0.5					       
+					    }
+					    ,items: [{
+					    	items: {
+								xtype: 'textfield'
+								,fieldLabel: 'Код'
+								,name: 'code'
+								,anchor: '-10'
+					    	}
+						},{
+							items: {
+								xtype: 'textfield'
+								,fieldLabel: 'Станд. время выполнения'
+								,name: 'execution_time'
+								,anchor: '-10'
+							}
+						}]																										
 					}]
 				}]				
 			},{
 				////
 				xtype: 'container'
-				,width: 380
+				,columnWidth: .4
 				,style: { padding: '2px' }
 				,items: [{
 				////
 					xtype: 'fieldset'			 	
 					,title: 'Дополнительно'
 					,autoHeight: true
-					
+					,border: false
 					,defaultType: 'textfield'
 					,labelWidth: 85					
-					,defaults: {
-						anchor: '-10'												
-					}					
+					,defaults: {anchor: '-10'}
 					,items:	[
-					{
-						xtype: 'container'
-						//,width: 100
-						,border: false
-						,anchor: '-10'						
-						,layout: 'hbox'
-						,items: [ 
-						{
-							xtype: 'container'
-							,width: 200
-							,layout: 'form'
-							,items:[this.MaterialCombo]							
-						},{
-							xtype: 'container'
-							,width: 144
-							,layout: 'form'
-							,items:[
-							{
-								xtype: 'textfield'
-								,fieldLabel: 'Станд. время выполнения'
-								,name: 'execution_time'
-								,anchor: '0'
-								//,labelWidth: 50
-							}]							
-						}]											
-					},{
+						this.MaterialCombo							
+					,{
 						xtype: 'textarea'
 						,fieldLabel: 'Общий рефер. интервал'						
 						,name: 'gen_ref_interval'
 					}]
 				}] 
-			}/*,{
-				xtype:'button',
-				text:'Сохранить (tmp)',
-				handler:function(){
-					if(this.record) {
-						if ( this.getForm().isValid() ) {
-							this.getForm().updateRecord(this.record);
-						}
-					}
-				},
-				scope:this
-			}*/]	
+			}]	
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.BaseServiceForm.superclass.initComponent.apply(this, arguments);
@@ -152,7 +135,7 @@ App.service.BaseServiceForm = Ext.extend(Ext.form.FormPanel, {
 		this.getForm().loadRecord(this.record);
 	}
 
-}); //end of baseServiceForm
+});
 
 Ext.reg('baseserviceform', App.service.BaseServiceForm);
 		

@@ -6,7 +6,10 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 	initComponent:function(){
 		this.hiddenPkgs = [];
 		config = {
+			
 		    rootVisible: false
+		    ,enableDD:true //!!!!!
+			//,ddGroup:'grid2tree'		    
 		    ,lines: false
 		    ,header: false
 	        ,animCollapse:false
@@ -20,8 +23,32 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 		        ,id: 'source'	        	
 	        }
 	        ,listeners:{
+				/*beforenodedrop:{fn:function(e) {
+					if(Ext.isArray(e.data.selections)) {
+						e.cancel = false;
+						e.dropNode = [];
+						var r;
+						for(var i = 0; i < e.data.selections.length; i++) {
+							r = e.data.selections[i];
+							e.dropNode.push(this.loader.createNode({
+								text:r.get('text')
+								,leaf:true
+								,price:r.get('price')
+								,change:r.get('change')
+								,qtip:r.get('industry')
+							}));
+						}					
+						return true;
+					}
+				}}*/	        
+	        	/*movenode : 
+	        		
+	        			this.fireEvent('nodeMove');
+	        		}*/
+	        			        	
 	        	click:function(node,e){
 	        		this.activeNode = node;
+	        		this.editButton.setDisabled(false);
 	        		this.fireEvent('nodeClick',node,e);
 	        	}
 	        }
@@ -33,11 +60,11 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 	        }
 	    	,tbar: [new Ext.form.TextField({
 	    		id:'service-tree-filter'
-	    	    ,width: 195
+	    	    ,width: 175
 				,emptyText:'Поиск по названию'
         		,enableKeyEvents: true
 				,listeners:{
-					render: function(f){
+					render: function(f){						
           				this.filter = new Ext.tree.TreeFilter(this, {
           					clearBlank: true
            					,autoClear: true
@@ -53,6 +80,14 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 		    })
 	    	,'->'
 	    	,{
+		    	iconCls:'silk-application-form-edit'
+		    	,ref:'../editButton'
+		    	,disabled: true
+		    	,handler:function(){
+		    		this.fireEvent('servicegroupedit');
+			   	}
+		    	,scope:this
+			},{
 		    	iconCls:'silk-add'
 		    	,ref:'../addButton'
 		    	,handler:function(){
@@ -61,16 +96,18 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 		    	,scope:this
 			},{
 		    	iconCls:'x-tbar-loading'
-		    	,handler:function(){
+		    	,handler: function(){
 				   	Ext.ux.JSONP.request('http://dev.medhq.ru/webapp/service/groups/', {
-		            	callbackKey: 'cb',
-		            	callback: function(data) {
-		            		this.getRootNode().removeAll();
-		            		this.getRootNode().appendChild(data);
-		            	},
-		            	scope:this
-					})
-				}
+			        	callbackKey: 'cb',
+			        	callback: function(data) {
+			        		this.getRootNode().removeAll();
+			        		this.getRootNode().appendChild(data);
+			        		this.activeNode = null; //change
+			        		this.editButton.setDisabled(true);
+			        	},
+			        	scope:this
+					})//this.updateTreeData()	    	
+		    	}
 		    	,scope:this
 			}]
 		};
@@ -81,6 +118,19 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 		/*this.getSelectionModel().on('beforeselect', function(sm, node){
 	  		return node.isLeaf();
 	  	});*/
+	}
+	
+	,updateTreeData: function(){
+	   	Ext.ux.JSONP.request('http://dev.medhq.ru/webapp/service/groups/', {
+        	callbackKey: 'cb',
+        	callback: function(data) {
+        		this.getRootNode().removeAll();
+        		this.getRootNode().appendChild(data);
+        		this.activeNode = null; //change
+        		this.editButton.setDisabled(true);
+        	},
+        	scope:this
+		})
 	}
 	
 	,filterTree: function(t, e){

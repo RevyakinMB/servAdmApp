@@ -5,13 +5,14 @@ App.service.ServiceWindow = Ext.extend(Ext.Window, {
 		
 		this.MaterialCombo = new App.service.MaterialCombo({
 		//width: 120
-			anchor: '-5'
-			,boxMaxWidth : 120
+			anchor: '-10'
+			//,boxMaxWidth : 120
 		});
 		
 		this.MainFormPanel = new Ext.form.FormPanel({ 
 			//title: 'Основное'
-			bodyStyle: 'padding: 5px'			
+			bodyStyle: 'padding: 5px'
+			,border: false
 			,defaultType: 'textfield'
 			,labelWidth: 85
 			,bodyStyle: {
@@ -38,28 +39,34 @@ App.service.ServiceWindow = Ext.extend(Ext.Window, {
 		
 		this.AdditionalFormPanel = new Ext.form.FormPanel({					
 			bodyStyle: 'padding: 5px'
+			,border: false
 			,defaultType: 'textfield'
 			,labelWidth: 85
 			,bodyStyle: {
     			background: 'transparent'
     			,padding: '5px'
 			}			
-			,items:	[
+			,items:	[this.MaterialCombo,
 			{
 				xtype: 'container'
 				,border: false
 				,anchor: '-10'						
 				,layout: 'column'
 				,items: [ 
+				
 				{
 					xtype: 'container'
-					//,width: 230
 					,columnWidth: .5
 					,layout: 'form'
-					,items:[this.MaterialCombo]							
+					,items:[{
+						xtype: 'textfield'
+						,fieldLabel: 'Код'
+						,name: 'code'
+						,anchor: '-5'
+						//,width: 120
+					}]							
 				},{
 					xtype: 'container'
-					//,width: 180
 					,columnWidth: .5
 					,layout: 'form'
 					,items:[
@@ -69,11 +76,8 @@ App.service.ServiceWindow = Ext.extend(Ext.Window, {
 						,name: 'execution_time'
 						,anchor: '0'
 					}]							
-				}]											
-			},{
-				fieldLabel: 'Код'
-				,name: 'code'
-				,width: 120
+				}]
+				
 			},{
 				xtype: 'textarea'
 				,anchor: '-10'
@@ -84,6 +88,7 @@ App.service.ServiceWindow = Ext.extend(Ext.Window, {
 				
 		this.ParentChoiceFormPanel = new Ext.form.FormPanel({ 			
 			labelWidth: 85
+			,border: false
 			,bodyStyle: {
     			background: 'transparent'
     			,padding: '5px'
