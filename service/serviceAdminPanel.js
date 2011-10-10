@@ -19,7 +19,9 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 			id:'grid'
 			//,flex: 1
 			,anchor: '0 -210'
-			,border: false					
+			,border: false	
+			,enableDragDrop:true
+			,ddGroup:'grid2tree' //same as for tree
 		});
 		
 		this.InfoTabPanel = new App.service.InfoTabPanel ({
@@ -80,11 +82,14 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
             		this.TreePanel.getRootNode().appendChild(data);
             	},
             	scope:this
-			})            
+			});
+			this.TreePanelManageStore.setBaseParam('is_group', true);			
 		},this);
 		
 		this.TreePanel.on('nodeClick',this.onNodeClick,this);
 		this.TreePanel.on('movenode',this.onMoveNode,this);
+		this.TreePanel.on('changeservicesgroup',this.changeServicesGroup,this);
+		
 		this.TreePanel.on('servicegroupadd',this.onServiceGroupAddClick,this);
 		this.TreePanel.on('servicegroupedit',this.onServiceGroupEditClick,this);	
 		
@@ -104,14 +109,45 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 		this.InfoTabPanel.on('cancelformchanges',this.onCancelFormChanges,this);		
 	}
 	
+	,changeServicesGroup : function (e) {
+		var r;
+		for(var i = 0; i < e.data.selections.length; i++) {
+			record = e.data.selections[i];			 
+			record.set('parent', "/api/v1/dashboard/baseservice/" + e.target.id );			
+		}
+		e.data.selections[0].store.save();
+	}
+	
+	
 	,onMoveNode : function(tree, node, oldParent, newParent, index) {
-		this.TreePanelManageStore.load({params:{start:0, limit:200}});
-		this.TreePanelManageStore.on('load',function() {
-			var rec_number = this.TreePanelManageStore.find("id",node.id);  
-			var rec = this.TreePanelManageStore.getAt(rec_number);
-			rec.set('parent', "/api/v1/dashboard/baseservice/" + newParent.id );
+		this.TreePanelManageStore.setBaseParam('id', node.id);
+		this.TreePanelManageStore.load({
+			callback: function (records, options, success) {
+				this.onMoveNodeStoreLoaded (records, options, success, oldParent, newParent)
+			}
+			,scope: this			
+		});
+		/*this.TreePanelManageStore.on('load',function() {		
+			var rec = this.TreePanelManageStore.getAt(0);
+			if (newParent.id != 'source') { 
+				rec.set('parent', "/api/v1/dashboard/baseservice/" + newParent.id );
+			} else {
+				rec.set('parent', "");
+			}
 			this.TreePanelManageStore.save();
-		},this);
+			
+		},this);*/
+	}
+	
+	,onMoveNodeStoreLoaded : function(records, options, success, oldParent, newParent) {
+		if (!records) {return 0;}
+		if (newParent.id != 'source') { 
+			records[0].set('parent', "/api/v1/dashboard/baseservice/" + newParent.id );
+		} else {
+			records[0].set('parent', null);
+		}
+		var numb = records[0].store.save();
+		var a = 0;
 	}
 	
 	,onCancelFormChanges: function () {
@@ -288,8 +324,7 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 		if (this.ServiceWindow && this.ServiceWindow.isVisible() ) {
 			this.ServiceWindow.ParentChoiceFormPanel.getForm().findField('parent_group').setValue("/api/v1/dashboard/baseservice/" + node.id);
 			this.ServiceWindow.ParentChoiceFormPanel.getForm().findField('name').setValue(node.text);
-		} else {
-			this.TreePanelManageStore.setBaseParam('is_group', true);
+		} else {			
 			this.ServiceGrid.removeButton.setDisabled(true);
 			this.ServiceGrid.store.setBaseParam('parent', node.id);
 			this.ServiceGrid.store.setBaseParam('is_group', false);

@@ -18,7 +18,7 @@ App.service.StaffWindow = Ext.extend(Ext.Window, {
 	    this.sourceStore = new Ext.data.RESTStore({
 			autoSave: false
 			,autoLoad: false
-			,apiUrl: get_api_url('staff')
+			,apiUrl: get_api_url('position')
 			,model: [
 				{ name : 'id'}
 				,{ name: 'name'}
@@ -69,10 +69,7 @@ App.service.StaffWindow = Ext.extend(Ext.Window, {
 	        ,buttons: [{
 	            text: 'Сохранить'
 	            ,iconCls:'silk-accept'
-	            ,handler: function(){
-	                /*if(this.isForm.getForm().isValid()){
-	                    Ext.Msg.alert('Submitted Values', 'The following will be sent to the server: <br />'+
-	                        this.isForm.getForm().getValues(true));*/
+	            ,handler: function(){	      
 	            	this.action = 'save';
 	            	this.close();
 	            }	           

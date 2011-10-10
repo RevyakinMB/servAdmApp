@@ -71,7 +71,7 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 		
 		this.checkNStaffForm = new Ext.form.FormPanel({
 			border: false
-			
+			//,margins: "0 0 0 0"
 			,bodyStyle: 'background-color:#dfe8f5;'			
 			,defaultType: 'textfield'
 			,layout: 'hbox'

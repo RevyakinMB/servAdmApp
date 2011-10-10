@@ -8,14 +8,18 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 		config = {
 			
 		    rootVisible: false
-		    ,enableDD:true //!!!!!
-			//,ddGroup:'grid2tree'		    
+		    ,enableDD:true
+			,ddGroup:'grid2tree'		    
 		    ,lines: false
 		    ,header: false
 	        ,animCollapse:false
 	        ,animate: false
 	        ,containerScroll: true
 	        ,autoScroll: true
+	        /*,baseAttrs: {
+			    allowChildren: true
+			    ,leaf: false
+			}*/
 	        ,root:{
 		        nodeType: 'async'
 		        ,text: 'Услуги клиники'
@@ -23,7 +27,12 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 		        ,id: 'source'	        	
 	        }
 	        ,listeners:{
-				/*beforenodedrop:{fn:function(e) {
+				beforenodedrop: function(e) {
+					this.fireEvent('changeservicesgroup',e);
+				}
+				
+				
+						/*fn:function(e) {
 					if(Ext.isArray(e.data.selections)) {
 						e.cancel = false;
 						e.dropNode = [];
@@ -40,13 +49,8 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 						}					
 						return true;
 					}
-				}}*/	        
-	        	/*movenode : 
-	        		
-	        			this.fireEvent('nodeMove');
-	        		}*/
-	        			        	
-	        	click:function(node,e){
+				}*/	   	        			        	
+	        	,click:function(node,e){
 	        		this.activeNode = node;
 	        		this.editButton.setDisabled(false);
 	        		this.fireEvent('nodeClick',node,e);
@@ -106,7 +110,7 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 			        		this.editButton.setDisabled(true);
 			        	},
 			        	scope:this
-					})//this.updateTreeData()	    	
+					})	    	
 		    	}
 		    	,scope:this
 			}]
@@ -126,7 +130,7 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
         	callback: function(data) {
         		this.getRootNode().removeAll();
         		this.getRootNode().appendChild(data);
-        		this.activeNode = null; //change
+        		this.activeNode = null; 
         		this.editButton.setDisabled(true);
         	},
         	scope:this
