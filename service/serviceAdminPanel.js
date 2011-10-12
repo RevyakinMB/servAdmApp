@@ -111,11 +111,20 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 	
 	,changeServicesGroup : function (e) {
 		var r;
-		for(var i = 0; i < e.data.selections.length; i++) {
-			record = e.data.selections[i];			 
-			record.set('parent', "/api/v1/dashboard/baseservice/" + e.target.id );			
+		if (e.data.selections) {
+			for(var i = 0; i < e.data.selections.length; i++) {
+				record = e.data.selections[i];			 
+				record.set('parent', "/api/v1/dashboard/baseservice/" + e.target.id );			
+			}			
+			//this.ServiceGrid.store.reloadNeeded = true;			
+			e.data.selections[0].store.save();
+			this.ServiceGrid.store.filter({
+				property     : 'parent',
+				value        : "/api/v1/dashboard/baseservice/" + this.ServiceGrid.store.baseParams.parent				
+			});
+			this.ServiceGrid.getSelectionModel().selectFirstRow();
+			//this.ServiceGrid.store.save();			
 		}
-		e.data.selections[0].store.save();
 	}
 	
 	
@@ -146,8 +155,8 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 		} else {
 			records[0].set('parent', null);
 		}
-		var numb = records[0].store.save();
-		var a = 0;
+		//this.ServiceGrid.store.reloadNeeded = false;
+		records[0].store.save();
 	}
 	
 	,onCancelFormChanges: function () {
@@ -326,6 +335,10 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 			this.ServiceWindow.ParentChoiceFormPanel.getForm().findField('name').setValue(node.text);
 		} else {			
 			this.ServiceGrid.removeButton.setDisabled(true);
+			this.ServiceGrid.store.filter({
+				property     : 'parent',
+				value        : node.id				
+			});
 			this.ServiceGrid.store.setBaseParam('parent', node.id);
 			this.ServiceGrid.store.setBaseParam('is_group', false);
 			this.ServiceGrid.store.load();

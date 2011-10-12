@@ -56,7 +56,7 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 		,model: [
 			{ name : 'parent'}
 			,{ name: 'resource_uri'}
-			,{ name: 'name', allowBlank: false }  // !!!!
+			,{ name: 'name', allowBlank: false }  
 			,{ name: 'short_name' }
 			,{ name: 'code'}						
 			,{ name : 'execution_time'}
@@ -66,7 +66,22 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 			,{ name : 'material_name'}			
 			,{ name : 'gen_ref_interval'} 
 		]
+		/*,listeners: {
+			save: function() {
+				if (this.reloadNeeded) {
+					this.store.load();
+				}
+			}
+			,write: function() {
+				if (this.reloadNeeded) {
+					this.store.load();
+				}
+			}
+			,scope: this
+		}*/
 	});
+	
+	//this.reloadNeeded = false;
 	
 	this.selM = new Ext.grid.CheckboxSelectionModel();
 	

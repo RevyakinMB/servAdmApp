@@ -123,7 +123,7 @@ Ext.ux.form.MultiSelect = Ext.extend(Ext.form.Field,  {
         if(Ext.isArray(this.store)){
             if (Ext.isArray(this.store[0])){
                 this.store = new Ext.data.ArrayStore({
-                    fields: ['value','text'],
+                    fields: ['value','text'], //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     data: this.store
                 });
                 this.valueField = 'value';

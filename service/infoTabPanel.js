@@ -99,6 +99,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 	
 	,onStaffSourceLoaded: function(records) {
 		var resultRecords = this.staffWindow.resultStore.getRange();
+		this.staffWindow.sourceRecords = this.staffWindow.sourceStore.getRange();
         for (var i = 0; i < resultRecords.length; i++) {	        	
         	var rec_number = this.staffWindow.sourceStore.find("name",resultRecords[i].data.name);  				
             this.staffWindow.sourceStore.remove(this.staffWindow.sourceStore.getAt(rec_number));	            
@@ -108,11 +109,22 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 	
 	,onStaffWindowClose: function() {
 		if (this.staffWindow.action == 'save') {
+			
+			var uri;
+			var resultRecords = this.staffWindow.resultStore.getRange();
+			for (var i = 0; i < resultRecords.length; i++) {
+				for (var j=0; j < this.staffWindow.sourceRecords.length; j++ ) {
+					if (this.staffWindow.sourceRecords[j].get('id') == resultRecords[i].get('id')) {
+						uri = this.staffWindow.sourceRecords[j].get('resource_uri');
+					}
+				}						
+				resultRecords[i].set('resource_uri',uri);
+			}			
+			
 			var datArray = new Array();
-	        var records = this.staffWindow.resultStore.getRange();
-	        for (var i = 0; i < records.length; i++) {
-	        	var ar = Array ( parseInt( records[i].data.id ), records[i].data.name );
-	            datArray.push(ar);
+	        for (var i = 0; i < resultRecords.length; i++) {
+	        	//var ar = Array (resultRecords[i].get('resource_uri') , resultRecords[i].get('name') );
+	            datArray.push(   resultRecords[i].get('resource_uri') );
 	        }
 //	        var aa = this.ExtendedServiceGrid.getSelectionModel().getSelected();
 	        this.ExtendedServiceGrid.getSelectionModel().getSelected().set('staff', datArray);

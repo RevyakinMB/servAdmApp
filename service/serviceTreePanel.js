@@ -16,12 +16,13 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 	        ,animate: false
 	        ,containerScroll: true
 	        ,autoScroll: true
-	        /*,baseAttrs: {
+	        ,baseAttrs: {
 			    allowChildren: true
 			    ,leaf: false
-			}*/
+			}
 	        ,root:{
 		        nodeType: 'async'
+		        //,expanded: true	
 		        ,text: 'Услуги клиники'
 		        ,draggable: false
 		        ,id: 'source'	        	
@@ -30,26 +31,7 @@ App.ServicePanel.Tree = Ext.extend(Ext.tree.TreePanel,{
 				beforenodedrop: function(e) {
 					this.fireEvent('changeservicesgroup',e);
 				}
-				
-				
-						/*fn:function(e) {
-					if(Ext.isArray(e.data.selections)) {
-						e.cancel = false;
-						e.dropNode = [];
-						var r;
-						for(var i = 0; i < e.data.selections.length; i++) {
-							r = e.data.selections[i];
-							e.dropNode.push(this.loader.createNode({
-								text:r.get('text')
-								,leaf:true
-								,price:r.get('price')
-								,change:r.get('change')
-								,qtip:r.get('industry')
-							}));
-						}					
-						return true;
-					}
-				}*/	   	        			        	
+     			        	
 	        	,click:function(node,e){
 	        		this.activeNode = node;
 	        		this.editButton.setDisabled(false);
