@@ -31,6 +31,13 @@ App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 			})
 			,restful: true
 			,autoSave: false
+			,listeners: {
+				save: function() {
+					this.ExtendedGridStore.load()
+				}
+				,scope: this
+				
+			}
 		});	
 		config = {	
 			loadMask : {

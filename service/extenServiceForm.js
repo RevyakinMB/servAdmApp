@@ -5,6 +5,7 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 		
 		this.CombOrganizationStore = new Ext.data.Store({
 			autoload: true
+			,storeUpdate: true
         	,proxy: new Ext.data.ScriptTagProxy({
             	url: get_api_url('state')
         	})
@@ -30,24 +31,19 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			,loadingText: 'Загрузка...'
 			,triggerAction: 'all'     
 			,typeAhead: true	
-			,anchor: '-10'  //valueField
+			,anchor: '-10'
 			,listeners: {
 				select: function() {
-					if (this.getForm().isValid()) {
-	            		this.getForm().updateRecord(this.record);	           
-	            		var a1 = this.OrganizationCombo.getValue();
-					/*	this.CombOrganizationStore.each(function(r){
-				            if(r.data[prop] == value){
-				                record = r;
-				                return false;
-				            }
-				        });*/
-				        
-	            		var a = this.OrganizationCombo.findRecord('resource_uri',a1);	            			            		
-	            		var rec_number = this.record.store.find("id",this.record.get("id"));          		
-					   	var rec = this.record.store.getAt(rec_number);
-					   	rec.set('state_name',a.get("name"));
-	            	}	
+					if (this.CombOrganizationStore.storeUpdate) {
+						if (this.getForm().isValid()) {
+		            		this.getForm().updateRecord(this.record);	           
+		            		var a1 = this.OrganizationCombo.getValue();				        
+		            		var a = this.OrganizationCombo.findRecord('resource_uri',a1);	            			            		
+		            		var rec_number = this.record.store.find("id",this.record.get("id"));          		
+						   	var rec = this.record.store.getAt(rec_number);
+						   	rec.set('state_name',a.get("name"));
+		            	}	
+					}
 				}				
 				,scope: this
 			}
@@ -90,8 +86,7 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			,labelWidth : 1
 			,items: [{
 				xtype: 'container'
-				,border: false
-				//,anchor: '-10'						
+				,border: false								
 				,layout: 'form'
 				,items: [ 
 				{	
@@ -101,8 +96,10 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 	        	    boxLabel: 'Активно',
 	            	name: 'is_active'
 	            	,handler: function() {
-	            		if (this.getForm().isValid()) {
-	            			this.getForm().updateRecord(this.record);
+	            		if (this.CombOrganizationStore.storeUpdate) {
+		            		if (this.getForm().isValid()) {
+		            			this.getForm().updateRecord(this.record);
+		            		}
 	            		}
 	            	}
 	            	,scope: this
@@ -127,6 +124,7 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 		
 		config = {	
 			border: false
+			,storeUpdate: true
 			,items: [{
 			 	xtype: 'fieldset'			 	
 				,title: 'Расширенная услуга'
@@ -142,19 +140,6 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 					,allowBlank: true					
 					,width: 50
 				},this.checkNStaffForm
-				/*,{	
-					xtype: 'checkbox',
-					checked: true,
-        	        labelSeparator: '',
-            	    boxLabel: 'Активно',
-                	name: 'is_active'
-				},{	
-					xtype: 'checkbox',
-					checked: false,
-            	    labelSeparator: '',
-                	boxLabel: 'Ручной метод',
-    	            name: 'is_manual'
-				}*/
 				,{	
 					xtype: 'hidden'
 					,name:'base_service'
@@ -174,15 +159,7 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 		this.getForm().loadRecord(this.record);
 		this.checkNStaffForm.getForm().loadRecord(this.record);
 	}
-	
-	/*,clearFields: function() {
-		this.getForm().findField('tube_count').setValue("");
-		this.getForm().findField('is_active').setValue(true);
-		this.getForm().findField('is_manual').setValue(false);
-		this.getForm().findField('state').reset();
-		this.getForm().findField('tube').reset();		
-	}*/
-
+		
 }); //end of ExtenServiceForm
 
 Ext.reg('extenserviceform', App.service.ExtenServiceForm);

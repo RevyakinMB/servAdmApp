@@ -71,7 +71,7 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 	    }, {
 	        name: 'on_date',
 	        type: 'date',
-	        dateFormat: 'j/n/Y'
+	        dateFormat: 'j/n/Y' //???? заменить?
 	    },{
 	        name: 'price_type',
 	        type: 'string'
@@ -104,12 +104,12 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 		    	,sortable: true 
 		    	,sizeble: true
 		    	,dataIndex: 'on_date'
-		    	,renderer : Ext.util.Format.dateRenderer('d/m/Y')
+		    	,renderer : Ext.util.Format.dateRenderer('d.m.Y')
 		    	,editor : {
 		    		xtype: 'datefield'
 		    		,allowBlank: false
-                	,format: 'd/m/Y'
-		    		,maxValue: (new Date()).format('d/m/Y')
+                	,format: 'd.m.Y'
+		    		,maxValue: (new Date()).format('d.m.Y')
 		    	}
 		    },{
 		    	header: "Цена"
@@ -156,10 +156,10 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
             	,disabled: true
             	,handler: function() {					
 					var priceRec = new this.priceModel ({
-						value : "1000"
+						value : "0"
 						,extended_service : "/api/v1/dashboard/extendedservice/" + this.store.baseParams.extended_service					
 						,price_type : "r"
-						,on_date: (new Date()).format('d/m/Y')
+						,on_date: (new Date()).format('d.m.Y')
 					})
 					this.editor.stopEditing();
 					this.store.insert(0, priceRec);

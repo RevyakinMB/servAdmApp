@@ -177,9 +177,9 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
                 	this.ExtendedServiceGrid.store.remove(s);           			
            		}
            		this.ExtendedServiceGrid.store.save();
-           		this.ExtendedServiceGrid.store.on('save', function() {
+           		/*this.ExtendedServiceGrid.store.on('save', function() {
 					this.ExtendedServiceGrid.store.load();
-				},this); 
+				},this);*/ 
            	}
            	,scope: this
          	,icon: Ext.MessageBox.QUESTION
@@ -190,13 +190,14 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 	,onNewRecordClick: function() {			
 		this.newServiceForm = new App.service.ExtenServiceForm({
 			//width: 385
-			anchor: '-10'
+			anchor: '-10'			
 			,height: 170
 			,bodyStyle: 'background-color:#dfe8f5;'							
 		});
 		var a = this.ExtendedServiceGrid.store.baseParams.base_service;
 		this.newServiceForm.getForm().findField('base_service').setValue("/api/v1/dashboard/extendedservice/" + a);		
 		this.newServiceForm.staffBtn.setVisible(false);
+		this.newServiceForm.CombOrganizationStore.storeUpdate = false;
 		this.newServiceWindow = new Ext.Window ({
 			width: 400
 			,height : 235
@@ -219,9 +220,9 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 							this.ExtendedServiceGrid.store.insert(0,p);
 							this.newServiceWindow.close();
 							this.ExtendedServiceGrid.store.save();
-							this.ExtendedServiceGrid.store.on('save', function() {
+							/*this.ExtendedServiceGrid.store.on('save', function() {
 								this.ExtendedServiceGrid.store.load();
-							},this);
+							},this);							*/
 						}
 					}
 					,scope: this
