@@ -130,13 +130,13 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
         		forceFit: true
         		,emptyText: 'Нет данных для текущей группы услуг'
 			}		 
-			,bbar: new Ext.PagingToolbar({
+			/*,bbar: new Ext.PagingToolbar({
 	            pageSize: 20,
 	            store: this.store,
 	            displayInfo: true,
 	            displayMsg: 'Показана запись {0} - {1} из {2}',
 	            emptyMsg: "Нет записей"
-	        })
+	        })*/
 	        ,tbar: [{
 	        	xtype: 'button'
 	        	,text: 'Новая услуга'

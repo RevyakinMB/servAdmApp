@@ -30,15 +30,27 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			,loadingText: 'Загрузка...'
 			,triggerAction: 'all'     
 			,typeAhead: true	
-			,anchor: '-10'
-			/*,listeners: {
+			,anchor: '-10'  //valueField
+			,listeners: {
 				select: function() {
 					if (this.getForm().isValid()) {
-	            		this.getForm().updateRecord(this.record);
+	            		this.getForm().updateRecord(this.record);	           
+	            		var a1 = this.OrganizationCombo.getValue();
+					/*	this.CombOrganizationStore.each(function(r){
+				            if(r.data[prop] == value){
+				                record = r;
+				                return false;
+				            }
+				        });*/
+				        
+	            		var a = this.OrganizationCombo.findRecord('resource_uri',a1);	            			            		
+	            		var rec_number = this.record.store.find("id",this.record.get("id"));          		
+					   	var rec = this.record.store.getAt(rec_number);
+					   	rec.set('state_name',a.get("name"));
 	            	}	
 				}				
 				,scope: this
-			}*/
+			}
 		});
 		
 		this.ComboTubeStore = new Ext.data.Store({

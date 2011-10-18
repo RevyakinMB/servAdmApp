@@ -32,8 +32,11 @@ App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 			,restful: true
 			,autoSave: false
 		});	
-		config = {											
-			store: this.ExtendedGridStore
+		config = {	
+			loadMask : {
+				msg : 'Подождите, идет загрузка...'
+			}
+			,store: this.ExtendedGridStore
 			,viewConfig: {
         		forceFit: true
 			}

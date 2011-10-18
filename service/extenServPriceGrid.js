@@ -79,7 +79,10 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 
 		
 		config = {
-			plugins: [this.editor]
+			loadMask : {
+				msg : 'Подождите, идет загрузка...'
+			}
+			,plugins: [this.editor]
 			,padding: "0px 0px 0px 2px"
 			,viewConfig: {
         		forceFit: true

@@ -22,7 +22,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 		});
 		
 		var config = {
-			activeItem:1
+			activeItem:1			
 	   		,items:[{					
 				title: 'Общая информация'
 				,id: 'commonTab'
@@ -243,7 +243,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 	,onExtendedServiceGridSelect: function(selModel, rowIndex, rec) {
 		this.ExtendedServiceGrid.removeButton.setDisabled(false);
 		var data = rec.json.resource_uri;					
-		this.ExtendedServForm.setActiveRecord(rec);		
+		this.ExtendedServForm.setActiveRecord(rec);			
     	this.PriceGrid.store.setBaseParam('extended_service', App.uriToId(data));
     	this.PriceGrid.store.load();
     	//this.ExtendedServForm.getForm().findField('saveButton').setDisabled(false); // WHY?! this "is null"???    	
