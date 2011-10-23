@@ -100,7 +100,7 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 		
 		this.regionListView = new Ext.list.ListView({
 	        store: this.regionListViewStore
-	        ,width: 200
+	        //,width: 200
 	        ,height: 150
 	        ,multiSelect: true
 	        ,emptyText: 'Проблемы...'
@@ -123,7 +123,7 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 	    
 	    this.placeListView = new Ext.list.ListView({
 	        store: this.placeListViewStore
-	        ,width: 200	        
+	        //,width: 200	        
 	        ,height: 150
 	        ,multiSelect: true
 	        ,emptyText: 'Проблемы...'
@@ -145,7 +145,7 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 	    
 		this.subjectListView = new Ext.list.ListView({
 	        store: this.subjectListViewStore
-	        ,width: 200
+	        //,width: 200
 	        ,height: 150
 	        ,multiSelect: false
 	        ,singleSelect: true
@@ -184,7 +184,7 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 				,name: 'preview'
 				,cls: 'grey-textfield-background'
 				,emptyText: 'Начните выбор адреса...'
-				,anchor: '-10'
+				,anchor: '-1'
 			},{
 			    xtype: 'line'
 			},{
@@ -196,10 +196,12 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 			},{
 				xtype: 'container'
 				,id: 'listsontainer'
-				,layout: 'hbox'
+				//,layout: 'hbox'
+				,layout: 'column'
 				,items: [{
 					xtype: 'panel'
 					,style: { padding: '0px 0px 0px 3px' }
+					,columnWidth: .33
 					,layout: 'fit'
 					,border: false
 					,items: [this.subjectListView]
@@ -218,6 +220,7 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 					xtype: 'panel'
 					,style: { padding: '0px 0px 0px 3px' }
 					,border: false
+					,columnWidth: .33
 					,layout: 'fit'
 					,items: [this.regionListView]
 					,tbar: [new Ext.form.TextField({
@@ -235,6 +238,7 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 					xtype: 'panel'
 					,style: { padding: '0px 0px 0px 3px' }
 					,border: false
+					,columnWidth: .34
 					,layout: 'fit'
 					,items: [this.placeListView]
 					,tbar: [new Ext.form.TextField({
@@ -262,7 +266,7 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 				,fieldLabel: 'Дополнительно'
 				,name: 'more'								
 				,emptyText: 'Введите остальную информацию'
-				,anchor: '-10'
+				,anchor: '-1'
 				,enableKeyEvents: true
 				,listeners: {
 					keyup:	function(field, e) { 	
