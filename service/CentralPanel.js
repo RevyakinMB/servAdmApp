@@ -48,8 +48,28 @@ App.ServCentralPanel = Ext.extend(Ext.Panel, {
                     	this.launchApp('serviceadminpanel');
                     },
                     scope:this
-                }]				
+                }]
+			},{
+				xtype: 'button'
+				,text: 'Компонент выбора адреса'
+				,handler: function () {
+					this.addressWindow = new App.service.AddressComponent();
+					this.addressWindow.show();
+				}
+				,scope: this
 			}
+               /* ,{ 
+					xtype: 'buttongroup'
+					,title: 'Компоненты'
+					,items: [{
+						text: 'КЛАДР'
+						,scale:'medium'
+						,handler: function(){
+	                    	this.launchApp('kladrpanel');
+	                    },
+	                    scope:this
+	                }]				
+				}*/
 			
 				/*{
 				xtype: 'buttongroup',
@@ -112,7 +132,8 @@ App.ServCentralPanel = Ext.extend(Ext.Panel, {
             	handler:function(){
             		window.location.href = '/webapp/logout/';
             	}
-            }*/]
+            }*/
+            ]
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.ServCentralPanel.superclass.initComponent.apply(this, arguments);

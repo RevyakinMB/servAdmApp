@@ -241,7 +241,8 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 		this.ServiceWindow.on('beforeclose', function() {
 			Ext.getCmp("servicecenterpanel").enable();
 			this.TreePanel.addButton.setDisabled(false);
-			if (this.ServiceWindow.action == "add") {
+			this.TreePanel.editButton.setDisabled(false);
+			if (this.ServiceWindow.action == "add") {				
 				
 				var p = new this.ServiceGrid.store.recordType();
 				this.ServiceWindow.MainFormPanel.getForm().updateRecord(p);
@@ -291,16 +292,18 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 		if (selModel.getCount() == 0) {
 			this.InfoTabPanel.disable();
 			Ext.getCmp('tabpanelcontainer').setTitle('Услуги');
-			//this.InfoTabPanel.setTitle('');
 			this.ServiceGrid.removeButton.setDisabled(true);
+			this.ServiceGrid.moveBelowBtn.setDisabled(true);	
+			this.ServiceGrid.moveHigherBtn.setDisabled(true);
 		} else {
 			this.InfoTabPanel.enable();
-			if (selModel.getCount() == 1) {				
+			if (selModel.getCount() == 1) {	
+				
+				this.ServiceGrid.moveBelowBtn.setDisabled(false);	
+				this.ServiceGrid.moveHigherBtn.setDisabled(false);				
 				Ext.getCmp("extendedTab").enable();
 				Ext.getCmp("commonTab").enable();
 				Ext.getCmp('tabpanelcontainer').setTitle(this.ServiceGrid.getSelectionModel().getSelected().get('name'));
-				//this.InfoTabPanel.setTitle(this.ServiceGrid.getSelectionModel().getSelected().get('name'));
-				//this.InfoTabPanel.setTitle('aaaaaa');
 				var a = this.InfoTabPanel.getActiveTab(); 
 				if (this.InfoTabPanel.items.indexOf(a) == 2) {
 					this.InfoTabPanel.setActiveTab(1);
@@ -310,7 +313,6 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 				this.ServiceGrid.removeButton.setDisabled(false);
 				this.InfoTabPanel.BaseServiceForm.setActiveRecord(selModel.getSelected());
 				var data = selModel.getSelected().json.resource_uri;		
-				this.InfoTabPanel.ExtendedServForm.CombOrganizationStore.load();		
 		    	this.InfoTabPanel.ExtendedServiceGrid.store.setBaseParam('base_service', App.uriToId(data));
 		    	this.InfoTabPanel.ExtendedServiceGrid.store.load();
 		    	this.InfoTabPanel.ExtendedServForm.getForm().findField('base_service').setValue(
@@ -319,7 +321,6 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 				this.ServiceGrid.removeButton.setDisabled(false);
 				this.InfoTabPanel.setActiveTab(2);
 				Ext.getCmp('tabpanelcontainer').setTitle('Услуги');
-				//this.InfoTabPanel.setTitle('');
 				Ext.getCmp("extendedTab").disable();
 				Ext.getCmp("commonTab").disable();
 			}
@@ -339,7 +340,7 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 			this.ServiceGrid.store.setBaseParam('parent', node.id);
 			this.ServiceGrid.store.setBaseParam('is_group', false);
 			this.ServiceGrid.store.load( {params:{start:0, limit: 100}} );
-			this.ServiceGrid.addButton.setDisabled(false);
+			this.ServiceGrid.addButton.setDisabled(false);			
 		}
 	}
 });

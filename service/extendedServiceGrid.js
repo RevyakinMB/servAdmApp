@@ -20,6 +20,7 @@ App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 					,{name: 'state'}
 					,{name: 'tube_count'}
 					,{name : 'staff'}
+					,{name : 'tube'}
 				]
 			)
 			,writer: new Ext.data.JsonWriter({
@@ -44,9 +45,21 @@ App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 				msg : 'Подождите, идет загрузка...'
 			}
 			,store: this.ExtendedGridStore
+			//,layout: 'fit'
+			//,anchor: '-1'
 			,viewConfig: {
-        		forceFit: true
-			}
+				getRowClass: function(rec, rowIdx, params, store) {
+				    return rec.data.is_active ? '' : 'grey-row-background'
+				}
+				/*
+				getRowClass: (function(rec, rowIdx, params, store) {
+					if (this.getSelectionModel().getSelected()) {						
+						return rec.get("id") != this.getSelectionModel().getSelected().get("id") ? 'grey-row-background' : 'x-grid3-row-selected';
+					} else 
+						{return 'grey-row-background'}
+			    }).createDelegate(this)*/
+			    ,forceFit: true
+			 }			
 			,sm : new Ext.grid.RowSelectionModel({
 				singleSelect : true
 			})

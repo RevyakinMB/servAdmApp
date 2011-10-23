@@ -1,8 +1,7 @@
 Ext.ns('App.service');
 
 App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
-	initComponent : function(){
-///////////////////// Extended Service Prices GRID configuration////////////////		
+	initComponent : function(){		
 		this.PriceGridStore = new Ext.data.Store ({
 			reader: new Ext.data.JsonReader ({
 				totalProperty: 'meta.total_count'
@@ -15,27 +14,24 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 					,{ name : 'value'}
 					,{ name : 'extended_service'}					
 					,{ name : 'price_type'}
-					,{ name : 'on_date'}//, type: 'date', dateFormat: 'd/m/Y'}
+					,{ name : 'payment_type'}					
+					,{ name : 'on_date'}
 				]
 			)			
 			,writer: new Ext.data.JsonWriter({
 				encode: false
 				,writeAllFields: true
 			})
-			,proxy: new Ext.data.HttpProxy({ //ScriptTagProxy({
+			,proxy: new Ext.data.HttpProxy({
 				url: get_api_url('price')
 			})
 			,restful: true
 			,autoSave: false
-		});
-		
-		/*Ext.util.Format.CurrencyFactory = function(c, d, t, s) {
-			return function(n) {
-				var m = (c = Math.abs(c) + 1 ? c : 2, d = d || ",", t = t || ".",/(\d+)(?:(\.\d+)|)/.exec(n + "")), x = m[1].length > 3 ? m[1].length % 3 : 0;
-				return ((x ? m[1].substr(0, x) + t : "") + m[1].substr(x).replace(/(d{3})(?=d)/g,"$1" + t) + (c ? d + (+m[2] || 0).toFixed(c).substr(2) : ""))+" "+s;
+			,listeners: {
+				save: function() { this.load(); }
 			}
-		}*/
-		
+		});
+				
 		Ext.util.Format.CurrencyFactory = function(dp, dSeparator, tSeparator, symbol) {
 		    return function(n) {
 		        dp = Math.abs(dp) + 1 ? dp : 2;
@@ -51,9 +47,7 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 		                + (dp? dSeparator + (+m[2] || 0).toFixed(dp).substr(2) : "")
 		                + " " + symbol;
 		    };
-		};
-
-		//var euroFormatter = Ext.util.Format.CurrencyFactory(2, ",", ".", "€")
+		};		
 		
 		this.editor = new Ext.ux.grid.RowEditor({        	
         	saveText  : "Сохранить"
@@ -71,12 +65,14 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 	    }, {
 	        name: 'on_date',
 	        type: 'date',
-	        dateFormat: 'j/n/Y' //???? заменить?
+	        dateFormat: 'j/n/Y' //???? заменить? 
 	    },{
 	        name: 'price_type',
 	        type: 'string'
+	    },{
+	        name: 'payment_type',
+	        type: 'string'
 	    }]);
-
 		
 		config = {
 			loadMask : {
@@ -100,7 +96,7 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 			,columns:[
 			{
 		    	header: "Дата"
-		    	,width: 110
+		    	,width: 90
 		    	,sortable: true 
 		    	,sizeble: true
 		    	,dataIndex: 'on_date'
@@ -113,7 +109,7 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 		    	}
 		    },{
 		    	header: "Цена"
-		    	//,width: 60
+		    	,width: 70
 				//,allowBlank: false
 		    	,sortable: true
 		    	,dataIndex: 'value'
@@ -131,23 +127,60 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 					allowBlank : false,
 					displayField : 'name'
 					,valueField : 'short'
-					,fieldLabel : 'Тип цены'
-					,emptyText : 'укажите тип цены...'
+					//,fieldLabel : 'Тип цены'
+					//,emptyText : 'укажите тип цены...'
 					,triggerAction : 'all'
 					,mode : 'local'
 					,store : new Ext.data.ArrayStore({
 						data : [ ['Розничная','r'], ['Закупочная','z']]
 						,fields : ['name', 'short']
-					})
-					//,name : 'reference'
-					//,typeAhead : true
-					//,forceSelection : true
-					//,lazyRender : true					
+					})			
 				})
 		    	,renderer : function(val) {
 		    		return val=='r' ? 'розничная' : 'закупочная'
 		    	}
-		    }]
+		    },{
+		    	header: "Тип оплаты"
+		    	,sortable: true
+		    	,dataIndex: 'payment_type'		    	
+		    	,width: 80		    	
+ 				,editor : new Ext.form.ComboBox({ 					 					
+					allowBlank : false,
+					displayField : 'name'
+					,valueField : 'short'
+					//,fieldLabel : 'Тип оплаты'
+					//,emptyText : 'укажите тип оплаты...'
+					,triggerAction : 'all'
+					,mode : 'local'
+					/*   	PAYMENT_TYPES = [
+					    (u'н',u'Наличная оплата'),
+					    (u'б',u'Безналичный перевод'),
+					    (u'л',u'Евромед Лузана'),
+					    (u'д',u'ДМС'),
+					]*/
+					,store : new Ext.data.ArrayStore({
+						data : [ ['Наличная оплата','н'], ['Безналичный перевод','б'],
+		    					 ['Евромед Лузана','л'], ['ДМС','д']]
+						,fields : ['name', 'short']
+					})				
+				})
+		    	,renderer : function(val) {
+		    		switch (val) {
+		    			case 'н': 
+		    				return 'Наличная оплата'
+		    			break
+		    			case 'б': 
+		    				return 'Безналичный перевод'
+		    			break
+		    			case 'л': 
+		    				return 'Евромед Лузана'
+		    			break
+		    			case 'д': 
+		    				return 'ДМС'
+		    			break
+		    		}
+		    	}
+		    }]		    
 			,tbar:[{
             	text:'Добавить'
             	,tooltip:'Новая цена'
@@ -159,6 +192,7 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 						value : "0"
 						,extended_service : "/api/v1/dashboard/extendedservice/" + this.store.baseParams.extended_service					
 						,price_type : "r"
+						,payment_type: "н"
 						,on_date: (new Date()).format('d.m.Y')
 					})
 					this.editor.stopEditing();
@@ -187,10 +221,10 @@ App.service.ExtenServPriceGrid = Ext.extend(Ext.grid.GridPanel, {
 			                	this.store.remove(s);           			
 			           		}
 			           		this.store.save();
-			           		this.store.on('save', function() {
+			           		/*this.store.on('save', function() {
 			           			//this.getView().refresh();
 								this.load();
-							}); 
+							}); */
 			           	}
 			           	,scope: this
 			         	,icon: Ext.MessageBox.QUESTION

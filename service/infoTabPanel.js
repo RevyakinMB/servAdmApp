@@ -39,12 +39,14 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 				,items: [
 					{
 						xtype: 'container'
-						,columnWidth: .5 
+						,columnWidth: .5
+						,layout: 'anchor'
 						,style: { padding: '0px 0px 0px 3px' }
 						,items: [this.ExtendedServiceGrid]
 					},{
 						xtype: 'container'
 						,columnWidth: .5
+						,layout: 'anchor'
 						,style: { padding: '0px 0px 0px 3px' }
 						,items: [this.PriceGrid]
 					},{
@@ -63,17 +65,6 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 	      }]
 	      ,bbar: ['->',{
 	      	xtype: 'button'
-	      	,iconCls:'silk-cancel'
-	      	,ref: '../cancelButton'
-	      	,text: 'Отменить изменения'
-	      	,width: 150
-	      	,disabled: true
-	      	,handler: function() {
-	      		this.fireEvent('cancelformchanges');	
-	      	}
-	      	,scope: this
-	      },{
-	      	xtype: 'button'
 	      	,iconCls:'silk-accept'
 	      	,ref: '../saveButton'
 	      	,text: 'Сохранить изменения'
@@ -81,6 +72,17 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 	      	,disabled: true
 	      	,handler: function() {
 	      		this.fireEvent('formsave');	
+	      	}
+	      	,scope: this
+	      },{
+	      	xtype: 'button'
+	      	,iconCls:'silk-cancel'
+	      	,ref: '../cancelButton'
+	      	,text: 'Отменить изменения'
+	      	,width: 150
+	      	,disabled: true
+	      	,handler: function() {
+	      		this.fireEvent('cancelformchanges');	
 	      	}
 	      	,scope: this
 	      }]
@@ -123,12 +125,10 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 			
 			var datArray = new Array();
 	        for (var i = 0; i < resultRecords.length; i++) {
-	        	//var ar = Array (resultRecords[i].get('resource_uri') , resultRecords[i].get('name') );
-	            datArray.push(   resultRecords[i].get('resource_uri') );
+	            datArray.push( resultRecords[i].get('resource_uri') );
 	        }
-//	        var aa = this.ExtendedServiceGrid.getSelectionModel().getSelected();
 	        this.ExtendedServiceGrid.getSelectionModel().getSelected().set('staff', datArray);
-//	        var aaa = this.ExtendedServiceGrid.store.save();	        
+	        this.ExtendedServiceGrid.store.save();	        
 		}
 	}
 	
@@ -211,7 +211,7 @@ App.service.InfoTabPanel = Ext.extend(Ext.TabPanel, {
 				,layoutConfig:	{pack: 'end' }
 				,items: [{
 					xtype: 'button'
-					,text: 'Создать'
+					,text: 'Сохранить'
 					,iconCls:'silk-add'
 					,handler: function() {
 						if ( this.newServiceForm.getForm().isValid() ) {							

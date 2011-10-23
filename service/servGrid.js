@@ -179,6 +179,28 @@ App.service.ServGrid = Ext.extend(Ext.grid.GridPanel, {
 				}
             	//this.fireEvent('deleterecordclick');            	
             	,scope: this	        		        
+	        },'-',{
+	        	xtype: 'button'
+	        	,text: ''
+	        	,tooltip:'Переместить услугу выше по таблице'
+            	,iconCls:'silk-arrow-up'            	
+            	,ref: '../moveHigherBtn'
+            	,disabled: true
+            	,handler: function() {            		
+            		
+            	}
+            	,scope: this	        	
+	        },'-',{
+	        	xtype: 'button'
+	        	,text: ''
+	        	,tooltip:'Переместить услугу ниже по таблице'
+            	,iconCls:'silk-arrow-down'
+            	,ref: '../moveBelowBtn'
+            	,disabled: true
+            	,handler: function() {
+            		
+            	}
+            	,scope: this	        	
 	        }]
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));

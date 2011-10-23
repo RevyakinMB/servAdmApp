@@ -67,6 +67,7 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 		this.TubeCombo = new Ext.form.ComboBox({
 
 			store: this.ComboTubeStore
+			,emptyText: 'Выберите контейнер' 
 			,displayField: 'name'			
 			,valueField: 'resource_uri'
 			,fieldLabel: 'Тара'			
@@ -85,16 +86,20 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			,layout: 'hbox'
 			,labelWidth : 1
 			,items: [{
-				xtype: 'container'
+				xtype: 'container'				
 				,border: false								
 				,layout: 'form'
 				,items: [ 
 				{	
-					xtype: 'checkbox',
-					checked: true,
-	    	        labelSeparator: '',
-	        	    boxLabel: 'Активно',
-	            	name: 'is_active'
+					xtype: 'checkbox'
+					,style: {						
+						marginLeft:  '-5px'
+						,marginRight:  '4px'
+					}
+					,checked: true
+	    	        ,labelSeparator: ''
+	        	    ,boxLabel: 'Активно'
+	            	,name: 'is_active'
 	            	,handler: function() {
 	            		if (this.CombOrganizationStore.storeUpdate) {
 		            		if (this.getForm().isValid()) {
@@ -104,11 +109,15 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 	            	}
 	            	,scope: this
 				},{	
-					xtype: 'checkbox',
-					checked: false,
-	        	    labelSeparator: '',
-	            	boxLabel: 'Ручной метод',
-		            name: 'is_manual'
+					xtype: 'checkbox'
+					,style: {						
+						marginLeft:  '-5px'
+						,marginRight:  '4px'
+					}
+					,checked: false
+	        	    ,labelSeparator: ''
+	            	,boxLabel: 'Ручной метод'
+		            ,name: 'is_manual'
 				}]	
 			},{
 				xtype: 'button'
@@ -151,6 +160,7 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 		App.service.ExtenServiceForm.superclass.initComponent.apply(this, arguments);
 		this.on('afterrender', function(){
 			this.CombOrganizationStore.load();
+			this.ComboTubeStore.load();			
 		},this);
 	}
 			
