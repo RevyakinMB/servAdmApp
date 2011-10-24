@@ -35,7 +35,7 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 			,listeners: {
 				select: function() {
 					if (this.CombOrganizationStore.storeUpdate) {
-						if (this.getForm().isValid()) {
+						if (this.getForm().isValid() & (this.record)) {
 		            		this.getForm().updateRecord(this.record);	           
 		            		var a1 = this.OrganizationCombo.getValue();				        
 		            		var a = this.OrganizationCombo.findRecord('resource_uri',a1);	            			            		
@@ -102,7 +102,7 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 	            	,name: 'is_active'
 	            	,handler: function() {
 	            		if (this.CombOrganizationStore.storeUpdate) {
-		            		if (this.getForm().isValid()) {
+		            		if (this.getForm().isValid() & (this.record) ){
 		            			this.getForm().updateRecord(this.record);
 		            		}
 	            		}
@@ -121,9 +121,8 @@ App.service.ExtenServiceForm = Ext.extend(Ext.form.FormPanel, {
 				}]	
 			},{
 				xtype: 'button'
-				,text: 'Кем выполняется'
+				,text: 'Список ответственных врачей'
 				,ref: '../../staffBtn'
-				//,iconCls:'silk-???'
 				,handler: function() {
 					this.fireEvent('staffmanageclick');
 				}

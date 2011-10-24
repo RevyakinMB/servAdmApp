@@ -1,46 +1,67 @@
 Ext.ns('App.service');
 
-App.service.line = Ext.extend(Ext.Component, {
-  autoEl: 'hr'
-});
-
-Ext.reg('line', App.service.line);
-
 App.service.AddressComponent = Ext.extend(Ext.Window, {
 	initComponent : function() {
 		
 		
-		this.subjectListViewStore = this.subjectListViewStore || new Ext.data.RESTStore({
+		this.subjectListViewStore = new Ext.data.Store({
+			/////
 			autoSave: false
 			,autoLoad: false
-			,apiUrl: get_api_url('state')
-			,model: [	
-				{name: 'name'}
-	        	,{name: 'resource_uri'}
-				,{name: 'id' }
-			]
+			,proxy: new Ext.data.HttpProxy({
+				url: get_api_url('state')
+			})
+			,reader: new Ext.data.JsonReader ({
+				totalProperty: 'meta.total_count'
+				,successProperty: 'success'
+				,messageProperty: 'message'
+				,idProperty: 'id'
+	  			,root: 'objects'
+				},[
+					{name: 'name'}
+	        		,{name: 'resource_uri'}
+					,{name: 'id' }
+				]
+			)									
 		});
 		
-		this.regionListViewStore = this.regionListViewStore || new Ext.data.RESTStore({
+		this.regionListViewStore = new Ext.data.Store({
 			autoSave: false
 			,autoLoad: false
-			,apiUrl: get_api_url('state')
-			,model: [	
-				{name: 'name'}
-	        	,{name: 'resource_uri'}
-				,{name: 'id' }
-			]
+			,proxy: new Ext.data.HttpProxy({
+				url: get_api_url('state')
+			})
+			,reader: new Ext.data.JsonReader ({
+				totalProperty: 'meta.total_count'
+				,successProperty: 'success'
+				,messageProperty: 'message'
+				,idProperty: 'id'
+	  			,root: 'objects'
+				},[
+					{name: 'name'}
+	        		,{name: 'resource_uri'}
+					,{name: 'id' }
+				]
+			)									
 		});
-		
-		this.placeListViewStore = this.placeListViewStore || new Ext.data.RESTStore({
+		this.placeListViewStore = new Ext.data.Store({
 			autoSave: false
 			,autoLoad: false
-			,apiUrl: get_api_url('state')
-			,model: [	
-				{name: 'name'}
-	        	,{name: 'resource_uri'}
-				,{name: 'id' }
-			]
+			,proxy: new Ext.data.HttpProxy({
+				url: get_api_url('state')
+			})
+			,reader: new Ext.data.JsonReader ({
+				totalProperty: 'meta.total_count'
+				,successProperty: 'success'
+				,messageProperty: 'message'
+				,idProperty: 'id'
+	  			,root: 'objects'
+				},[
+					{name: 'name'}
+	        		,{name: 'resource_uri'}
+					,{name: 'id' }
+				]
+			)									
 		});
 		
 		this.countryCombo = new Ext.form.ComboBox({ 					 					
@@ -58,12 +79,11 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 			,triggerAction : 'all'
 			,mode : 'local'
 			,store : new Ext.data.ArrayStore({
-				data : [ ['Россия',0], ['Страна1',1], ['Страна2',2]]
-				,fields : ['name', 'id']
+				data : [ ['Россия',0,0], ['Страна1',1,1], ['Страна2',2,1]]
+				,fields : ['name', 'id','level']
 			})
 			,listeners: {
-				select: function(selfEl, record, number) {
-					this.addrPreview[0] = record.get("name");
+				select: function(selfEl, record, number) {					
 					this.addrPreviewReDraw();
 				}
 				,scope: this
@@ -85,123 +105,107 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 			,triggerAction : 'all'
 			,mode : 'local'
 			,store : new Ext.data.ArrayStore({
-				data : [ ['Тургенева',0], ['Суворова',1], ['Селезнева',2],['Селедочная',3],['Селезенная',4]]
-				,fields : ['name', 'id']
+				data : [ ['Тургенева',0,0,0], ['Суворова',1,0,0], ['Селезнева',2,0,0],['Селедочная',3,0,0],['Селезенная',4,0,0]]
+				,fields : ['name', 'id','code', 'adrtype']
 			})
 			,listeners: {
 				select: function(selfEl, record, number) {
-					this.addrPreview[4] = record.get("name");
 					this.addrPreviewReDraw();
 				}
 				,scope: this
 			}
 		});
 		
-		
-		this.regionListView = new Ext.list.ListView({
-	        store: this.regionListViewStore
-	        //,width: 200
+		this.subjectListView = new Ext.list.ListView({
+	        store: this.subjectListViewStore
 	        ,height: 150
-	        ,multiSelect: true
-	        ,emptyText: 'Проблемы...'
+	        ,multiSelect: false
+	        ,singleSelect: true
 	        ,hideHeaders: true
-	        ,columns: [{
-	            //header: 'Регион'
-	            dataIndex: 'name'
+	        ,columns: [{	            
+	            dataIndex: 'name'	            
 	        }]
 	        ,listeners: {
-	        	selectionchange: function(view, selections) {
-	        		this.addrPreview[2] = selections[0].textContent;;
-					this.addrPreviewReDraw();	
-	        		this.placeListViewStore.load();
+	        	selectionchange: function(thisView, selections) {	        		
+					this.placeListViewStore.loadData(
+						{"meta": {"limit": 0, "offset": 0, "total_count": 0}, "objects": []},false);
+					this.regionListViewStore.loadData(
+						{"meta": {"limit": 0, "offset": 0, "total_count": 0}, "objects": []},false);					
+	        		this.regionListViewStore.load();
+					this.addrPreviewReDraw();	        		
 	        	}
 	        	,scope: this
 	        }
 	    });
-	    
-	    
-	    
-	    this.placeListView = new Ext.list.ListView({
-	        store: this.placeListViewStore
-	        //,width: 200	        
+		
+		
+		this.regionListView = new Ext.list.ListView({
+	        store: this.regionListViewStore
 	        ,height: 150
 	        ,multiSelect: true
-	        ,emptyText: 'Проблемы...'
 	        ,hideHeaders: true
 	        ,columns: [{
-	            //header: 'Город'
 	            dataIndex: 'name'
 	        }]
 	        ,listeners: {
 	        	selectionchange: function(view, selections) {
-	        		this.addrPreview[3] = selections[0].textContent;;
+					this.placeListViewStore.loadData(
+						{"meta": {"limit": 0, "offset": 0, "total_count": 0}, "objects": []},false);
+	        		this.placeListViewStore.load();
+					this.addrPreviewReDraw();	        		
+	        	}
+	        	,scope: this
+	        }
+	    });
+	    	    	   
+	    this.placeListView = new Ext.list.ListView({
+	        store: this.placeListViewStore
+	        ,height: 150
+	        ,multiSelect: true
+	        ,hideHeaders: true
+	        ,columns: [{
+	            dataIndex: 'name'
+	        }]
+	        ,listeners: {
+	        	selectionchange: function(view, selections) {
 					this.addrPreviewReDraw();	
-	        		//this.streetCombo.store.load();
 	        	}
 	        	,scope: this
 	        }
 	        
-	    });
-	    
-		this.subjectListView = new Ext.list.ListView({
-	        store: this.subjectListViewStore
-	        //,width: 200
-	        ,height: 150
-	        ,multiSelect: false
-	        ,singleSelect: true
-	        ,emptyText: 'Проблемы...'
-	        //,reserveScrollOffset: true// ??
-	        ,hideHeaders: true
-	        ,columns: [{
-	            //header: 'Субъект'
-	            dataIndex: 'name'	            
-	        }]
-	        ,listeners: {
-	        	selectionchange: function(thisView, selections) {
-	        		this.addrPreview[1] = selections[0].textContent;;
-					this.addrPreviewReDraw();					
-	        		this.regionListViewStore.load();	        		
-	        	}
-	        	,scope: this
-	        }
-	    });
-	    
-	    this.addrPreview = new Array(); // [0] - страна. [1] - 1 список. [2] - 2 список. [3] - 3 список.    
-										// [4] - улица.  [5] - доп. информация.
-	    for (i=0; i<6; i++) {
-	    	this.addrPreview[i]="";
-	    }
-	    this.addrPreview[0] ='Россия';
+	    });	    			    	   
 	    
 	    this.addressForm = new Ext.form.FormPanel({
 	    	border: false
 	    	,bodyStyle:'padding: 2px; background-color:#dfe8f5;'		
-			,defaultType: 'textfield'
+			,defaultType: 'container'
 			,layout: 'form'
 			,labelWidth : 100
 			,items: [{
-				fieldLabel: 'Предпросмотр'	
+				fieldLabel: 'Предпросмотр'
+				,xtype: 'textfield'
 				,name: 'preview'
 				,cls: 'grey-textfield-background'
 				,emptyText: 'Начните выбор адреса...'
 				,anchor: '-1'
-			},{
-			    xtype: 'line'
-			},{
-				xtype: 'container'
-				,width: 300
+			},
+				new Ext.Component({autoEl: 'hr'})  			    
+			,{
+				//xtype: 'container'
+				width: 300
 				,border: false				
 				,layout: 'form'
 				,items: [this.countryCombo]
 			},{
 				xtype: 'container'
 				,id: 'listsontainer'
-				//,layout: 'hbox'
-				,layout: 'column'
+				,layout: 'hbox'
+				//,layout: 'column'
 				,items: [{
 					xtype: 'panel'
 					,style: { padding: '0px 0px 0px 3px' }
-					,columnWidth: .33
+					//,columnWidth: .33
+					,flex:1
 					,layout: 'fit'
 					,border: false
 					,items: [this.subjectListView]
@@ -220,7 +224,8 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 					xtype: 'panel'
 					,style: { padding: '0px 0px 0px 3px' }
 					,border: false
-					,columnWidth: .33
+					//,columnWidth: .33
+					,flex:1
 					,layout: 'fit'
 					,items: [this.regionListView]
 					,tbar: [new Ext.form.TextField({
@@ -238,7 +243,8 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 					xtype: 'panel'
 					,style: { padding: '0px 0px 0px 3px' }
 					,border: false
-					,columnWidth: .34
+					//,columnWidth: .34
+					,flex:1
 					,layout: 'fit'
 					,items: [this.placeListView]
 					,tbar: [new Ext.form.TextField({
@@ -270,7 +276,7 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 				,enableKeyEvents: true
 				,listeners: {
 					keyup:	function(field, e) { 	
-						this.addrPreview[5] = this.addressForm.getForm().findField('more').getValue();
+						//this.addrPreview[5] = this.addressForm.getForm().findField('more').getValue();
 						this.addrPreviewReDraw();
 					}
 					,scope: this
@@ -309,39 +315,50 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 		});
 		
 		this.countryCombo.on('select', function(combo, record) {
-			if (record.get('id') != 0 ) {
-				Ext.getCmp("listsontainer").disable();
-				Ext.getCmp("streetcontainer").disable();				
+			if (record.get('level') != 0 ) {
+				this.subjectListView.hide();
+				this.regionListView.hide();
+				this.placeListView.hide();
+				this.streetCombo.hide();				
 			} else {
-				Ext.getCmp("listsontainer").enable();
-				Ext.getCmp("streetcontainer").enable();
+				this.subjectListView.show();
+				this.regionListView.show();
+				this.placeListView.show();
+				this.streetCombo.show();
 			}
 			
-		})
+		},this)
 		
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.AddressComponent.superclass.initComponent.apply(this, arguments);
 				
 	}
 	,setActiveAddress: function(rec) {
-		//
+		// for callback call
 	}
 	
 	,addrPreviewReDraw: function() {
-		var str="";
-		if ( this.addrPreview[0] == 'Россия') {
-			for (i=0; i<6; i++) {
-				if (this.addrPreview[i] != "" ){
-					if (str != "") {
-						str = str + ", " + this.addrPreview[i];
-					} else {
-						str = str + this.addrPreview[i];
-					}
-				}					
-			}
-		} else {
-			str = this.addrPreview[0] + ", " + this.addrPreview[5];
+		var addrPreview = new Array();
+		var i = 0;
+		////осторожно, велосипед////
+		addrPreview[i] = this.countryCombo.findRecord('id',this.countryCombo.getValue()).get('name');
+		var cntrLevel = this.countryCombo.findRecord('id',this.countryCombo.getValue()).get('level');
+		if (addrPreview[i]) {i++}   		
+		if (cntrLevel == 0) {		
+			var tmp = this.subjectListView.getSelectedRecords()
+			if (tmp[0]) { addrPreview[i] = tmp[0].get("name"); i++ }
+			tmp = this.regionListView.getSelectedRecords()
+			if (tmp[0]) { addrPreview[i] = tmp[0].get("name"); i++ }
+			tmp = this.placeListView.getSelectedRecords()
+			if (tmp[0]) { addrPreview[i] = tmp[0].get("name"); i++ }
+			
+			addrPreview[i] = this.streetCombo.findRecord('id',this.streetCombo.getValue()).get('name');
+			if (addrPreview[i]) {i++}
 		}
+		
+		addrPreview[i] = this.addressForm.getForm().findField('more').getValue();
+		
+		var str = addrPreview.join(', ');
 		this.addressForm.getForm().findField('preview').setValue(str);		
 	}
 });
