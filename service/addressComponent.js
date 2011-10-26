@@ -5,7 +5,6 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 		
 		
 		this.subjectListViewStore = new Ext.data.Store({
-			/////
 			autoSave: false
 			,autoLoad: false
 			,proxy: new Ext.data.HttpProxy({
@@ -182,16 +181,17 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 			,layout: 'form'
 			,labelWidth : 100
 			,items: [{
-				fieldLabel: 'Предпросмотр'
+				fieldLabel: ''
 				,xtype: 'textfield'
+				,readOnly: true
+				,style: 'margin-left: -105px'
 				,name: 'preview'
 				,cls: 'grey-textfield-background'
 				,emptyText: 'Начните выбор адреса...'
-				,anchor: '-1'
+				,anchor: '210'
 			},
 				new Ext.Component({autoEl: 'hr'})  			    
 			,{
-				//xtype: 'container'
 				width: 300
 				,border: false				
 				,layout: 'form'
@@ -200,11 +200,9 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 				xtype: 'container'
 				,id: 'listsontainer'
 				,layout: 'hbox'
-				//,layout: 'column'
 				,items: [{
 					xtype: 'panel'
 					,style: { padding: '0px 0px 0px 3px' }
-					//,columnWidth: .33
 					,flex:1
 					,layout: 'fit'
 					,border: false
@@ -224,7 +222,6 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 					xtype: 'panel'
 					,style: { padding: '0px 0px 0px 3px' }
 					,border: false
-					//,columnWidth: .33
 					,flex:1
 					,layout: 'fit'
 					,items: [this.regionListView]
@@ -243,7 +240,6 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 					xtype: 'panel'
 					,style: { padding: '0px 0px 0px 3px' }
 					,border: false
-					//,columnWidth: .34
 					,flex:1
 					,layout: 'fit'
 					,items: [this.placeListView]
@@ -276,7 +272,6 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 				,enableKeyEvents: true
 				,listeners: {
 					keyup:	function(field, e) { 	
-						//this.addrPreview[5] = this.addressForm.getForm().findField('more').getValue();
 						this.addrPreviewReDraw();
 					}
 					,scope: this
@@ -305,6 +300,7 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 			title: 'Выбор адреса'
 			,id: 'addressComponentID'
 			,border: false
+			,modal: true
 			,layout: 'form'
 			,width: 637
 			,height: 400	
@@ -338,25 +334,20 @@ App.service.AddressComponent = Ext.extend(Ext.Window, {
 	}
 	
 	,addrPreviewReDraw: function() {
-		var addrPreview = new Array();
-		var i = 0;
-		////осторожно, велосипед////
-		addrPreview[i] = this.countryCombo.findRecord('id',this.countryCombo.getValue()).get('name');
+		var addrPreview = new Array();		
+		addrPreview.push(this.countryCombo.findRecord('id',this.countryCombo.getValue()).get('name'))
 		var cntrLevel = this.countryCombo.findRecord('id',this.countryCombo.getValue()).get('level');
-		if (addrPreview[i]) {i++}   		
-		if (cntrLevel == 0) {		
-			var tmp = this.subjectListView.getSelectedRecords()
-			if (tmp[0]) { addrPreview[i] = tmp[0].get("name"); i++ }
-			tmp = this.regionListView.getSelectedRecords()
-			if (tmp[0]) { addrPreview[i] = tmp[0].get("name"); i++ }
-			tmp = this.placeListView.getSelectedRecords()
-			if (tmp[0]) { addrPreview[i] = tmp[0].get("name"); i++ }
+		if (cntrLevel == 0) {
+			if (this.subjectListView.getSelectedRecords()[0]) 
+				{ addrPreview.push(this.subjectListView.getSelectedRecords()[0].get("name")); }
+			if (this.regionListView.getSelectedRecords()[0]) 
+				{ addrPreview.push(this.regionListView.getSelectedRecords()[0].get("name")); }
+			if (this.placeListView.getSelectedRecords()[0]) 
+				{ addrPreview.push(this.placeListView.getSelectedRecords()[0].get("name")); }
 			
-			addrPreview[i] = this.streetCombo.findRecord('id',this.streetCombo.getValue()).get('name');
-			if (addrPreview[i]) {i++}
+			addrPreview.push(this.streetCombo.findRecord('id',this.streetCombo.getValue()).get('name'));
 		}
-		
-		addrPreview[i] = this.addressForm.getForm().findField('more').getValue();
+		addrPreview.push(this.addressForm.getForm().findField('more').getValue());
 		
 		var str = addrPreview.join(', ');
 		this.addressForm.getForm().findField('preview').setValue(str);		

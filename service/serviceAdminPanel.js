@@ -299,8 +299,8 @@ App.service.ServiceAdminPanel = Ext.extend(Ext.Panel, {
 			this.InfoTabPanel.enable();
 			if (selModel.getCount() == 1) {	
 				
-				this.ServiceGrid.moveBelowBtn.setDisabled(false);	
-				this.ServiceGrid.moveHigherBtn.setDisabled(false);				
+				this.ServiceGrid.moveBelowBtn.setDisabled(!selModel.hasNext());	
+				this.ServiceGrid.moveHigherBtn.setDisabled(!selModel.hasPrevious());				
 				Ext.getCmp("extendedTab").enable();
 				Ext.getCmp("commonTab").enable();
 				Ext.getCmp('tabpanelcontainer').setTitle(this.ServiceGrid.getSelectionModel().getSelected().get('name'));

@@ -2,7 +2,26 @@ Ext.ns('App.service');
 
 App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 	initComponent : function(){
-///////////////////// Extended Service GRID configuration////////////////				
+///////////////////// Extended Service GRID configuration////////////////
+		this.positionStore = new Ext.data.Store({
+			proxy: new Ext.data.HttpProxy({
+				url: get_api_url('position')
+			})					
+			,reader: new Ext.data.JsonReader ({
+				totalProperty: 'meta.total_count'
+				,successProperty: 'success'
+				,messageProperty: 'message'
+				,idProperty: 'id'
+	  			,root: 'objects'
+			},[
+				{ name : 'id'}
+				,{ name: 'name'}
+				,{ name: 'resource_uri'}
+			])
+			,autoSave: false
+			,autoLoad: true
+			
+		});
 		this.ExtendedGridStore = new Ext.data.Store ({
 			reader: new Ext.data.JsonReader ({
 				totalProperty: 'meta.total_count'
@@ -36,9 +55,24 @@ App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 				save: function() {
 					this.ExtendedGridStore.load()
 				}
+        		,beforesave: function(store,data) {        			
+        			if (data.update) {	        			
+	        			var staff = data.update[0].get("staff");
+	        			var i = 0;	        			
+	        			if (staff[0].constructor == Array) {
+		        			var uriArray = Array();
+		        			while (staff[i]) {	        					        				
+		        				var ind = this.positionStore.find("id",staff[i][0]);
+		        				uriArray.push(this.positionStore.getAt(ind).get("resource_uri"));	        				        					        			
+		        				i++;
+		        			}
+		        			var recNumb = store.find("id",data.update[0].get("id"));
+		        			store.getAt(recNumb).set('staff',uriArray);
+	        			}
+        			}
+        		}
 				,scope: this
-				
-			}
+        	}							
 		});	
 		config = {	
 			loadMask : {
@@ -106,8 +140,8 @@ App.service.ExtendedServiceGrid = Ext.extend(Ext.grid.GridPanel, {
 					this.fireEvent ('deleterecordclick');
 				}
 				,scope:this
-        	}]
-
+        	}]        	
+        	
 		}
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		App.service.ExtendedServiceGrid.superclass.initComponent.apply(this, arguments);
